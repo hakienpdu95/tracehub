@@ -1,0 +1,7 @@
+{
+    "Auth": true,
+    "Organization": true,
+    "User": true,
+    "ActivityLog": true,
+    "Assessment": true
+}
