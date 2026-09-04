@@ -16,18 +16,17 @@ return new class extends Migration
         }
 
         Schema::create('organization_versions', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->nullable()->unique()->comment('Public UUID — expose ra ngoài, không phải PK');
+            $table->ulid('id')->primary();
             $table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');
-            $table->foreignId('organization_id')->constrained()->restrictOnDelete();
+            $table->foreignUlid('organization_id')->constrained()->restrictOnDelete();
             $table->unsignedInteger('version');
             $table->json('config_json');
             $table->string('checksum', 64)->comment('sha256(config_json) — phát hiện thay đổi ngoài workflow');
             $table->string('status', 20)->default('draft');
             $table->timestamp('effective_at')->nullable();
             $table->text('change_reason')->nullable();
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUlid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUlid('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('created_at')->nullable();
             

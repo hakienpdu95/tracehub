@@ -16,10 +16,9 @@ return new class extends Migration
         }
 
         Schema::create('activity_log_http', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->nullable()->unique()->comment('Public UUID — expose ra ngoài, không phải PK');
+            $table->ulid('id')->primary();
             $table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');
-            $table->unsignedBigInteger('log_id');
+            $table->ulid('log_id');
             $table->unsignedTinyInteger('http_method')->comment('1=GET 2=POST 3=PUT 4=PATCH 5=DELETE 6=HEAD 7=OPTIONS');
             $table->string('url', 2000);
             $table->string('route_name', 191)->nullable();

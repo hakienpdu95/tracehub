@@ -22,7 +22,6 @@ class Organization extends BaseOrganization implements HasMedia
 {
     use HasTenantMedia;
     protected $fillable = [
-        'uuid',
         'name',
         'slug',
         'code',

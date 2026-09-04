@@ -37,7 +37,7 @@ abstract class TenantAwareAction
     }
 
     /** @throws TenantNotSetException */
-    protected function organizationId(): int
+    protected function organizationId(): string
     {
         return TenantContext::resolve()->id;
     }

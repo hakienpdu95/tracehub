@@ -4,11 +4,14 @@ namespace Modules\Organization\Models;
 
 use App\Models\User;
 use App\Shared\Tenancy\Models\Organization;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MemberPostExitAudit extends Model
 {
+    use HasUlids;
+
     protected $table = 'member_post_exit_audits';
 
     public $timestamps = false;

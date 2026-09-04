@@ -16,10 +16,9 @@ return new class extends Migration
         }
 
         Schema::create('activity_log_contexts', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->nullable()->unique()->comment('Public UUID — expose ra ngoài, không phải PK');
+            $table->ulid('id')->primary();
             $table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');
-            $table->unsignedBigInteger('log_id');
+            $table->ulid('log_id');
             $table->string('key_name', 64);
             $table->unsignedTinyInteger('value_type')->default(1)->comment('1=string 2=integer 3=decimal 4=boolean 5=datetime');
             $table->string('val_string', 500)->nullable();

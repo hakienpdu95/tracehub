@@ -65,7 +65,7 @@ class NotificationPreferenceService
     }
 
     /** Returns saved preferences keyed by event_type. */
-    public function getForUser(User $user, int $organizationId): Collection
+    public function getForUser(User $user, string $organizationId): Collection
     {
         return NotificationPreference::where('user_id', $user->id)
             ->where('organization_id', $organizationId)
@@ -76,7 +76,7 @@ class NotificationPreferenceService
     /** Create or update a single preference row. */
     public function upsert(
         User $user,
-        int $organizationId,
+        string $organizationId,
         string $eventType,
         bool $channelDb,
         bool $channelMail,

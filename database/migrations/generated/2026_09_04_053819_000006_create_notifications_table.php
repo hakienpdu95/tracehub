@@ -11,18 +11,23 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasTable('regions')) {
+        if (Schema::hasTable('notifications')) {
             return;
         }
 
-        Schema::create('regions', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->nullable()->unique()->comment('Public UUID — expose ra ngoài, không phải PK');
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->ulid('id')->primary();
             $table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');
-            $table->string('name', 255)->index()->comment('Tên vùng');
+            $table->string('type');
+            $table->string('notifiable_type');
+            $table->ulid('notifiable_id');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
             
+
+            // Indexes
+            $table->index(['notifiable_type', 'notifiable_id']);
         });
 
         
@@ -30,6 +35,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('regions');
+        Schema::dropIfExists('notifications');
     }
 };

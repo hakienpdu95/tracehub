@@ -16,11 +16,10 @@ return new class extends Migration
         }
 
         Schema::create('notification_preferences', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->nullable()->unique()->comment('Public UUID — expose ra ngoài, không phải PK');
+            $table->ulid('id')->primary();
             $table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('organization_id');
+            $table->ulid('user_id');
+            $table->ulid('organization_id');
             $table->string('event_type', 100);
             $table->boolean('channel_db')->default(true);
             $table->boolean('channel_mail')->default(false);

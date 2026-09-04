@@ -16,7 +16,7 @@ return new class extends Migration
         }
 
         Schema::create('process_approval_flows', static function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
             $table->string('name');
             $table->string('approvable_type');
             $table->timestamps();

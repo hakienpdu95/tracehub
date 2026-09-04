@@ -8,6 +8,7 @@ use App\Shared\Tenancy\TenantContext;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\NotificationPreference;
 use App\Models\PushSubscription;
@@ -35,7 +36,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles, LogsActivity;
+    use HasFactory, HasUlids, Notifiable, HasRoles, LogsActivity;
 
     protected function casts(): array
     {
@@ -107,7 +108,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * Priority: TenantContext (middleware-resolved) → user's own organization_id.
      */
-    public function getCurrentOrganizationIdAttribute(): ?int
+    public function getCurrentOrganizationIdAttribute(): ?string
     {
         return TenantContext::getOrganizationId() ?? $this->organization_id;
     }
@@ -117,7 +118,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return TenantContext::get() ?? $this->organization;
     }
 
-    public function belongsToOrganization(int $organizationId): bool
+    public function belongsToOrganization(string $organizationId): bool
     {
         return $this->organization_id === $organizationId;
     }

@@ -13,7 +13,7 @@ return new class extends Migration
                   ->default(2)->after('log_name')
                   ->comment('1=debug 2=info 3=warning 4=error 5=critical');
 
-            $table->unsignedBigInteger('organization_id')
+            $table->ulid('organization_id')
                   ->nullable()->after('level')
                   ->comment('Tenant context — NULL khi CLI/system job');
 

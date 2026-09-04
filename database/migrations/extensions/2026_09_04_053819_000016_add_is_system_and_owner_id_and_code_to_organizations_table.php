@@ -15,10 +15,28 @@ return new class extends Migration {
                 $table->boolean('is_system')->default(false)->after('settings')->comment('True = org hệ thống mặc định cho super-admin');
             }
             if (!Schema::hasColumn('organizations', 'owner_id')) {
-                $table->unsignedBigInteger('owner_id')->nullable()->index()->after('is_system')->comment('ID người sở hữu — không có FK ở DB');
+                $table->ulid('owner_id')->nullable()->index()->after('is_system')->comment('ID người sở hữu — không có FK ở DB');
+            }
+            if (!Schema::hasColumn('organizations', 'code')) {
+                $table->string('code', 30)->nullable()->unique()->after('owner_id')->comment('Mã tổ chức — mã nghiệp vụ nội bộ, khác slug');
+            }
+            if (!Schema::hasColumn('organizations', 'locale')) {
+                $table->string('locale', 10)->nullable()->after('code')->comment('Ngôn ngữ mặc định của tổ chức');
+            }
+            if (!Schema::hasColumn('organizations', 'timezone')) {
+                $table->string('timezone', 50)->nullable()->after('locale')->comment('Múi giờ mặc định của tổ chức');
+            }
+            if (!Schema::hasColumn('organizations', 'purpose')) {
+                $table->text('purpose')->nullable()->after('timezone')->comment('Mục đích/tôn chỉ hoạt động của tổ chức');
+            }
+            if (!Schema::hasColumn('organizations', 'retention_policy_id')) {
+                $table->string('retention_policy_id', 50)->nullable()->after('purpose')->comment('Chính sách lưu trữ dữ liệu áp dụng');
+            }
+            if (!Schema::hasColumn('organizations', 'activated_at')) {
+                $table->timestamp('activated_at')->nullable()->after('retention_policy_id')->comment('Thời điểm tổ chức được kích hoạt');
             }
             if (!Schema::hasColumn('organizations', 'tax_code')) {
-                $table->string('tax_code', 20)->nullable()->after('owner_id')->comment('Mã số thuế doanh nghiệp');
+                $table->string('tax_code', 20)->nullable()->after('activated_at')->comment('Mã số thuế doanh nghiệp');
             }
             if (!Schema::hasColumn('organizations', 'phone')) {
                 $table->string('phone', 20)->nullable()->after('tax_code')->comment('Số điện thoại liên hệ');
@@ -68,7 +86,7 @@ return new class extends Migration {
                 $table->string('source', 50)->nullable()->after('full_address')->comment('marketplace_signup | admin_created | etc.');
             }
             if (!Schema::hasColumn('organizations', 'approved_by')) {
-                $table->unsignedBigInteger('approved_by')->nullable()->after('source');
+                $table->ulid('approved_by')->nullable()->after('source');
             }
             if (!Schema::hasColumn('organizations', 'approved_at')) {
                 $table->timestamp('approved_at')->nullable()->after('approved_by');
@@ -84,7 +102,7 @@ return new class extends Migration {
         Schema::table('organizations', function (Blueprint $table) {
             if (Schema::hasColumn('organizations', 'province_code')) $table->dropForeign(['province_code']);
             if (Schema::hasColumn('organizations', 'ward_code')) $table->dropForeign(['ward_code']);
-            $cols = array_filter(['is_system', 'owner_id', 'tax_code', 'phone', 'email', 'website', 'industry', 'address', 'city', 'country', 'postal_code', 'description', 'logo_path', 'province_code', 'ward_code', 'full_address', 'source', 'approved_by', 'approved_at', 'email_domain'], fn($c) => Schema::hasColumn('organizations', $c));
+            $cols = array_filter(['is_system', 'owner_id', 'code', 'locale', 'timezone', 'purpose', 'retention_policy_id', 'activated_at', 'tax_code', 'phone', 'email', 'website', 'industry', 'address', 'city', 'country', 'postal_code', 'description', 'logo_path', 'province_code', 'ward_code', 'full_address', 'source', 'approved_by', 'approved_at', 'email_domain'], fn($c) => Schema::hasColumn('organizations', $c));
             if (!empty($cols)) $table->dropColumn(array_values($cols));
         });
     }

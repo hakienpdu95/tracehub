@@ -45,7 +45,7 @@ class OrganizationLogoController extends Controller
             ->each(fn ($m) => $this->uploadService->delete($m));
 
         return response()->json([
-            'uuid'       => $media->uuid,
+            'uuid'       => $media->id,
             'thumb_url'  => $this->urlService->url($media, 'thumb'),
             'medium_url' => $this->urlService->url($media, 'medium'),
             'url'        => $this->urlService->url($media),

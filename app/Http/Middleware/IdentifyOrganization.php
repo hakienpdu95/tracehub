@@ -74,11 +74,11 @@ class IdentifyOrganization
     {
         $orgId = $request->header('X-Organization-ID');
 
-        if (!$orgId || !is_numeric($orgId)) {
+        if (!$orgId) {
             return null;
         }
 
-        $org = $this->findById((int) $orgId);
+        $org = $this->findById($orgId);
 
         if (!$org) {
             return null;
@@ -123,7 +123,7 @@ class IdentifyOrganization
             return null;
         }
 
-        return $this->findById((int) $orgId);
+        return $this->findById($orgId);
     }
 
     /**
@@ -156,7 +156,7 @@ class IdentifyOrganization
         return $id ? Organization::find($id) : null;
     }
 
-    private function findById(int $id): ?Organization
+    private function findById(string $id): ?Organization
     {
         // Cache chỉ ID đã xác nhận tồn tại, KHÔNG cache full model.
         // Luôn load fresh model để isActive() phản ánh đúng trạng thái hiện tại.

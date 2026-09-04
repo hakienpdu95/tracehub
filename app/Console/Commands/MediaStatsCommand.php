@@ -88,7 +88,7 @@ class MediaStatsCommand extends Command
         return self::SUCCESS;
     }
 
-    private function resolveOrgName(?int $orgId): ?string
+    private function resolveOrgName(?string $orgId): ?string
     {
         if ($orgId === null) {
             return '(system)';

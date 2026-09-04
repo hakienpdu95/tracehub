@@ -4,6 +4,7 @@ namespace Modules\Organization\Models;
 
 use App\Models\User;
 use App\Shared\Tenancy\Traits\BelongsToOrganization;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Organization\Enums\OrganizationVersionStatus;
@@ -12,11 +13,11 @@ use Modules\Organization\Enums\OrganizationVersionStatus;
 class OrganizationVersion extends Model
 {
     use BelongsToOrganization;
+    use HasUlids;
 
     public $timestamps = false;
 
     protected $fillable = [
-        'uuid',
         'organization_id',
         'version',
         'config_json',
@@ -41,14 +42,8 @@ class OrganizationVersion extends Model
     protected static function booted(): void
     {
         static::creating(function (self $model): void {
-            $model->uuid ??= (string) \Illuminate\Support\Str::uuid();
             $model->created_at ??= now();
         });
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'uuid';
     }
 
     // ── Relationships ────────────────────────────────────────────────────────

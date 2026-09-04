@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use App\Enums\PermissionEnum as P;
 use App\Enums\RoleEnum;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use App\Models\Permission;
+use App\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder

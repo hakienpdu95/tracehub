@@ -3,12 +3,15 @@
 namespace Modules\ActivityLog\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Modules\ActivityLog\Enums\LogLevel;
 use Spatie\Activitylog\Models\Activity;
 
 class ActivityLog extends Activity
 {
+    use HasUlids;
+
     protected $table = 'activity_log';
 
     protected $casts = [
@@ -65,7 +68,7 @@ class ActivityLog extends Activity
 
     // ── Scopes ───────────────────────────────────────────────────
 
-    public function scopeForOrganization(Builder $q, int $orgId): Builder
+    public function scopeForOrganization(Builder $q, string $orgId): Builder
     {
         // Bao gồm cả rows không có org (system/legacy logs)
         return $q->where(fn ($q) => $q->where('organization_id', $orgId)->orWhereNull('organization_id'));

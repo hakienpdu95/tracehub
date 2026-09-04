@@ -70,7 +70,7 @@ class MediaCleanupOrphansCommand extends Command
         $deleted = 0;
         foreach ($orphans as $media) {
             if ($isDryRun) {
-                $this->line("  [Jodit] Would delete: {$media->uuid} — {$media->file_name}");
+                $this->line("  [Jodit] Would delete: {$media->id} — {$media->file_name}");
                 continue;
             }
             try {
@@ -79,10 +79,10 @@ class MediaCleanupOrphansCommand extends Command
             } catch (\Throwable $e) {
                 Log::error('media:cleanup-orphans [jodit] failed', [
                     'media_id' => $media->id,
-                    'uuid'     => $media->uuid,
+                    'uuid'     => $media->id,
                     'error'    => $e->getMessage(),
                 ]);
-                $this->warn("  [Jodit] Failed {$media->uuid}: {$e->getMessage()}");
+                $this->warn("  [Jodit] Failed {$media->id}: {$e->getMessage()}");
             }
         }
 
@@ -131,7 +131,7 @@ class MediaCleanupOrphansCommand extends Command
         $deleted = 0;
         foreach ($orphans as $media) {
             if ($isDryRun) {
-                $this->line("  [FilePond] Would delete: {$media->uuid} — {$media->file_name} (collection: {$media->collection_name})");
+                $this->line("  [FilePond] Would delete: {$media->id} — {$media->file_name} (collection: {$media->collection_name})");
                 continue;
             }
             try {
@@ -140,10 +140,10 @@ class MediaCleanupOrphansCommand extends Command
             } catch (\Throwable $e) {
                 Log::error('media:cleanup-orphans [filepond] failed', [
                     'media_id' => $media->id,
-                    'uuid'     => $media->uuid,
+                    'uuid'     => $media->id,
                     'error'    => $e->getMessage(),
                 ]);
-                $this->warn("  [FilePond] Failed {$media->uuid}: {$e->getMessage()}");
+                $this->warn("  [FilePond] Failed {$media->id}: {$e->getMessage()}");
             }
         }
 

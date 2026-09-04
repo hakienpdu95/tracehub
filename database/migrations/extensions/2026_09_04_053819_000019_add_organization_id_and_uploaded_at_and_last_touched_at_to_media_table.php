@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('media', function (Blueprint $table) {
             if (!Schema::hasColumn('media', 'organization_id')) {
-                $table->unsignedBigInteger('organization_id')->nullable();
+                $table->ulid('organization_id')->nullable();
             }
             if (!Schema::hasColumn('media', 'uploaded_at')) {
                 $table->timestamp('uploaded_at')->nullable()->after('organization_id')->comment('Timestamp user thực sự upload — bảo toàn khi migrate từ bảng cũ');

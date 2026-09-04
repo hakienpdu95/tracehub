@@ -361,7 +361,7 @@ class GenerateExtension extends Command
             && str_contains($colMod, 'constrained')
             && !str_contains($colMod, 'references(')
         ) {
-            $def = "\$table->foreignId('$colName')";
+            $def = "\$table->foreignUlid('$colName')";
             if ($nullable)       $def .= '->nullable()';
             $def .= $this->normalizeOnDelete($colMod);
             $def .= $afterClause;

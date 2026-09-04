@@ -4,6 +4,7 @@ namespace Modules\Organization\Models;
 
 use App\Models\User;
 use App\Shared\Tenancy\Models\Organization;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -19,6 +20,8 @@ use Modules\Organization\Enums\MemberStatus;
  */
 class OrganizationMember extends Model
 {
+    use HasUlids;
+
     protected $table = 'organization_members';
 
     protected $fillable = [

@@ -19,7 +19,7 @@ class ListUsersQuery implements QueryInterface
         public readonly ?string $search        = null,
 
         // Tenant scope — null = all (admin only), non-null = single org
-        public readonly ?int    $organizationId = null,
+        public readonly ?string $organizationId = null,
 
         // Exact filters
         public readonly ?string $role          = null,

@@ -16,10 +16,9 @@ return new class extends Migration
         }
 
         Schema::create('push_subscriptions', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->nullable()->unique()->comment('Public UUID — expose ra ngoài, không phải PK');
+            $table->ulid('id')->primary();
             $table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
             $table->string('endpoint', 500);
             $table->string('public_key', 500)->nullable();
             $table->string('auth_token', 255)->nullable();

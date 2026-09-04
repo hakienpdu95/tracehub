@@ -17,11 +17,11 @@ return new class extends Migration
         }
 
         Schema::create('process_approval_statuses', static function (Blueprint $table) {
-            $table->id();
-            $table->morphs('approvable');
+            $table->ulid('id')->primary();
+            $table->ulidMorphs('approvable');
             $table->json('steps')->nullable();
             $table->string('status', 10)->default(ApprovalStatusEnum::CREATED->value);
-            $table->foreignId('creator_id')->nullable();
+            $table->foreignUlid('creator_id')->nullable();
             $table->timestamps();
         });
     }

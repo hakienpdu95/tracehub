@@ -16,13 +16,13 @@ return new class extends Migration
         }
 
         Schema::create('process_approvals', static function (Blueprint $table) {
-            $table->id();
-            $table->morphs('approvable');
-            $table->foreignId('process_approval_flow_step_id')->nullable()->constrained('process_approval_flow_steps')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->ulidMorphs('approvable');
+            $table->foreignUlid('process_approval_flow_step_id')->nullable()->constrained('process_approval_flow_steps')->cascadeOnDelete();
             $table->string('approval_action', 12)->default('Approved');
             $table->text('approver_name')->nullable();
             $table->text('comment')->nullable();
-            $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreignUlid('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }

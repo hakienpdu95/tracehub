@@ -99,13 +99,13 @@ class MediaMigrateDiskCommand extends Command
 
                     Log::error('media:migrate-disk failed', [
                         'media_id' => $media->id,
-                        'uuid'     => $media->uuid,
+                        'uuid'     => $media->id,
                         'error'    => $e->getMessage(),
                     ]);
 
                     $bar->finish();
                     $this->newLine();
-                    $this->error("HALT — checksum failure on uuid={$media->uuid}: {$e->getMessage()}");
+                    $this->error("HALT — checksum failure on uuid={$media->id}: {$e->getMessage()}");
                     $this->warn('Already-migrated records were NOT rolled back. Fix the error and re-run.');
 
                     return self::FAILURE;

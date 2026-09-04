@@ -12,10 +12,10 @@ class LogEntryData extends Data
 {
     public function __construct(
         // Tenant
-        public readonly ?int      $organizationId,
+        public readonly ?string   $organizationId,
 
         // Actor
-        public readonly ?int      $actorId,
+        public readonly ?string   $actorId,
         #[WithCast(EnumCast::class)]
         public readonly ActorType $actorType,
         public readonly string    $actorName,
@@ -29,7 +29,7 @@ class LogEntryData extends Data
 
         // Subject
         public readonly ?string $subjectType,
-        public readonly ?int    $subjectId,
+        public readonly ?string $subjectId,
         public readonly ?string $subjectLabel,
 
         // Misc

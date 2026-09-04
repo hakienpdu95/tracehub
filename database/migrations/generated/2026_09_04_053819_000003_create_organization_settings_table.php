@@ -16,10 +16,9 @@ return new class extends Migration
         }
 
         Schema::create('organization_settings', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->nullable()->unique()->comment('Public UUID — expose ra ngoài, không phải PK');
+            $table->ulid('id')->primary();
             $table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');
-            $table->foreignId('organization_id')->constrained('organizations')->cascadeOnDelete()->comment('Tổ chức');
+            $table->foreignUlid('organization_id')->constrained('organizations')->cascadeOnDelete()->comment('Tổ chức');
             $table->string('key', 100)->index()->comment('Khóa cài đặt');
             $table->text('value')->nullable()->comment('Giá trị (serialized nếu cần)');
             $table->enum('type', ['string', 'integer', 'boolean', 'json', 'float'])->default('string')->comment('Kiểu dữ liệu giá trị');

@@ -35,7 +35,7 @@ class EmailVerificationController extends Controller
         return view('auth.verify-email');
     }
 
-    public function verify(Request $request, int $id, string $hash): RedirectResponse
+    public function verify(Request $request, string $id, string $hash): RedirectResponse
     {
         $user = User::find($id);
         abort_unless($user, 403);

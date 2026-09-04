@@ -16,13 +16,12 @@ return new class extends Migration
         }
 
         Schema::create('jodit_drafts', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->nullable()->unique()->comment('Public UUID — expose ra ngoài, không phải PK');
+            $table->ulid('id')->primary();
             $table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');
-            $table->foreignId('organization_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUlid('organization_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUlid('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('context_type')->nullable()->comment('Loại entity sẽ nhận media sau khi save');
-            $table->unsignedBigInteger('context_id')->nullable()->comment('ID entity sẽ nhận media sau khi save');
+            $table->ulid('context_id')->nullable()->comment('ID entity sẽ nhận media sau khi save');
             $table->timestamps();
             $table->softDeletes();
             

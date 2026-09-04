@@ -86,7 +86,7 @@ class OrganizationDemoSeeder extends Seeder
             $createdAt = $now->copy()->subDays(mt_rand(0, 730))->subHours(mt_rand(0, 23));
 
             $orgs[] = [
-                'uuid'          => Str::uuid()->toString(),
+                'id'            => (string) Str::ulid(),
                 'name'          => $name,
                 'slug'          => $slug,
                 'status'        => self::STATUSES[$i % 10],
@@ -156,6 +156,7 @@ class OrganizationDemoSeeder extends Seeder
 
             foreach ($picked as $userId) {
                 $rows[] = [
+                    'id'              => (string) Str::ulid(),
                     'organization_id' => $orgId,
                     'user_id'         => $userId,
                     'role'            => $this->pick(self::MEMBER_ROLES),

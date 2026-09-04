@@ -2,11 +2,14 @@
 
 namespace Modules\Organization\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrganizationSetting extends Model
 {
+    use HasUlids;
+
     protected $table = 'organization_settings';
 
     protected $fillable = [

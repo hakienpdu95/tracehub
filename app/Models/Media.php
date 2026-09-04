@@ -6,6 +6,7 @@ use App\Shared\Tenancy\OrganizationScope;
 use App\Shared\Tenancy\TenantContext;
 use App\Shared\Tenancy\Traits\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
@@ -22,6 +23,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 class Media extends SpatieMedia
 {
     use BelongsToOrganization;
+    use HasUlids;
 
     /**
      * Override newQuery to bypass OrganizationScope when TenantContext is not set.

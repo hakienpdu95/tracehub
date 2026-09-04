@@ -54,7 +54,7 @@ class MediaJoditUploadController extends Controller
 
                 $result[] = [
                     'url'  => $this->urlService->url($media, 'medium'),
-                    'uuid' => $media->uuid,
+                    'uuid' => $media->id,
                 ];
             } catch (\Throwable $e) {
                 Log::error('Jodit upload failed', ['error' => $e->getMessage()]);
@@ -81,7 +81,7 @@ class MediaJoditUploadController extends Controller
     public function destroy(string $uuid): JsonResponse
     {
         $media = Media::withoutTenant()
-            ->where('uuid', $uuid)
+            ->where('id', $uuid)
             ->where('collection_name', 'jodit_content')
             ->where('model_type', JoditDraft::class)
             ->firstOrFail();
@@ -106,7 +106,7 @@ class MediaJoditUploadController extends Controller
         }
 
         Media::withoutTenant()
-            ->whereIn('uuid', $uuids)
+            ->whereIn('id', $uuids)
             ->where('collection_name', 'jodit_content')
             ->where('model_type', JoditDraft::class)
             ->get()
@@ -125,7 +125,7 @@ class MediaJoditUploadController extends Controller
         $request->validate(['uuids' => ['required', 'array']]);
 
         Media::withoutTenant()
-            ->whereIn('uuid', $request->uuids)
+            ->whereIn('id', $request->uuids)
             ->where('collection_name', 'jodit_content')
             ->update(['last_touched_at' => now()]);
 
@@ -138,7 +138,7 @@ class MediaJoditUploadController extends Controller
      */
     public function refreshUrl(string $uuid): JsonResponse
     {
-        $media = Media::where('uuid', $uuid)->firstOrFail();
+        $media = Media::where('id', $uuid)->firstOrFail();
 
         return response()->json([
             'url' => $this->urlService->url($media),

@@ -15,7 +15,7 @@ return new class extends Migration
         }
 
         Schema::create(config('laravel-subscriptions.tables.features'), function (Blueprint $table): void {
-            $table->id();
+            $table->ulid('id')->primary();
 
             $table->foreignIdFor(config('laravel-subscriptions.models.plan'));
             $table->json('name');

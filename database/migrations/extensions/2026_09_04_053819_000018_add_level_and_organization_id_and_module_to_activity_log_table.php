@@ -15,7 +15,7 @@ return new class extends Migration {
                 $table->unsignedTinyInteger('level')->default(2)->comment('1=debug 2=info 3=warning 4=error 5=critical');
             }
             if (!Schema::hasColumn('activity_log', 'organization_id')) {
-                $table->unsignedBigInteger('organization_id')->nullable()->after('level')->comment('Tenant context — NULL khi CLI/system job');
+                $table->ulid('organization_id')->nullable()->after('level')->comment('Tenant context — NULL khi CLI/system job');
             }
             if (!Schema::hasColumn('activity_log', 'module')) {
                 $table->string('module', 64)->nullable()->after('organization_id');
@@ -50,13 +50,16 @@ return new class extends Migration {
             if (!Schema::hasIndex('activity_log', 'idx_request')) {
                 $table->index('request_id', 'idx_request');
             }
+            if (!Schema::hasColumn('activity_log', 'ulid')) {
+                $table->ulid('ulid')->nullable()->after('subject_label')->comment('Tenant context — NULL khi CLI/system job');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('activity_log', function (Blueprint $table) {
-            $cols = array_filter(['level', 'organization_id', 'module', 'action', 'actor_name', 'actor_ip', 'request_id', 'session_id', 'subject_label'], fn($c) => Schema::hasColumn('activity_log', $c));
+            $cols = array_filter(['level', 'organization_id', 'module', 'action', 'actor_name', 'actor_ip', 'request_id', 'session_id', 'subject_label', 'ulid'], fn($c) => Schema::hasColumn('activity_log', $c));
             if (!empty($cols)) $table->dropColumn(array_values($cols));
         });
     }

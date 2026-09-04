@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('activity_log_http', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('log_id');
+            $table->ulid('id')->primary();
+            $table->ulid('log_id');
             $table->unsignedTinyInteger('http_method')
                   ->comment('1=GET 2=POST 3=PUT 4=PATCH 5=DELETE 6=HEAD 7=OPTIONS');
             $table->string('url', 2000);

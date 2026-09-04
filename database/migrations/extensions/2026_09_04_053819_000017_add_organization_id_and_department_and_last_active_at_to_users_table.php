@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             if (!Schema::hasColumn('users', 'organization_id')) {
-                $table->foreignId('organization_id')->nullable()->constrained('organizations')->nullOnDelete()->after('email')->comment('Thuộc tổ chức nào — null nếu super-admin');
+                $table->foreignUlid('organization_id')->nullable()->constrained('organizations')->nullOnDelete()->after('email')->comment('Thuộc tổ chức nào — null nếu super-admin');
             }
             if (!Schema::hasColumn('users', 'department')) {
                 $table->string('department', 50)->nullable()->index()->after('organization_id')->comment('Phòng ban: hr, sales, ops, marketing');
@@ -27,16 +27,19 @@ return new class extends Migration {
                 $table->index('organization_id');
             }
             if (!Schema::hasColumn('users', 'branch_id')) {
-                $table->unsignedBigInteger('branch_id')->nullable()->after('is_active');
+                $table->ulid('branch_id')->nullable()->after('is_active');
             }
             if (!Schema::hasColumn('users', 'department_id')) {
-                $table->unsignedBigInteger('department_id')->nullable()->after('branch_id');
+                $table->ulid('department_id')->nullable()->after('branch_id');
             }
             if (!Schema::hasColumn('users', 'account_type')) {
                 $table->string('account_type', 20)->default('free')->after('department_id')->comment('free | org_member | suspended');
             }
+            if (!Schema::hasColumn('users', 'lifecycle_status')) {
+                $table->string('lifecycle_status', 20)->nullable()->after('account_type')->comment('invited | pending | active | suspended | archived — vòng đời đăng nhập tài khoản');
+            }
             if (!Schema::hasColumn('users', 'current_org_id')) {
-                $table->unsignedBigInteger('current_org_id')->nullable()->after('account_type')->comment('NULL nếu free');
+                $table->ulid('current_org_id')->nullable()->after('lifecycle_status')->comment('NULL nếu free');
             }
             if (!Schema::hasColumn('users', 'trust_level')) {
                 $table->unsignedTinyInteger('trust_level')->default(0)->after('current_org_id')->comment('0=unverified, 1=email, 3=cccd, 4=cccd_biometric');
@@ -57,7 +60,7 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             if (Schema::hasColumn('users', 'organization_id')) $table->dropForeign(['organization_id']);
-            $cols = array_filter(['organization_id', 'department', 'last_active_at', 'is_active', 'branch_id', 'department_id', 'account_type', 'current_org_id', 'trust_level', 'national_id_hash'], fn($c) => Schema::hasColumn('users', $c));
+            $cols = array_filter(['organization_id', 'department', 'last_active_at', 'is_active', 'branch_id', 'department_id', 'account_type', 'lifecycle_status', 'current_org_id', 'trust_level', 'national_id_hash'], fn($c) => Schema::hasColumn('users', $c));
             if (!empty($cols)) $table->dropColumn(array_values($cols));
         });
     }

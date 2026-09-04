@@ -16,8 +16,7 @@ return new class extends Migration
         }
 
         Schema::create('organizations', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->nullable()->unique();
+            $table->ulid('id')->primary();
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('status')->default('active');

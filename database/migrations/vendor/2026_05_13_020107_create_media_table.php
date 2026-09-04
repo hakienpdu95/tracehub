@@ -13,10 +13,9 @@ return new class extends Migration
         }
 
         Schema::create('media', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
 
-            $table->morphs('model');
-            $table->uuid()->nullable()->unique();
+            $table->ulidMorphs('model');
             $table->string('collection_name');
             $table->string('name');
             $table->string('file_name');

@@ -44,12 +44,12 @@ final class LogEntryBuilder
         );
     }
 
-    private function organizationId(): ?int
+    private function organizationId(): ?string
     {
         return TenantContext::isSet() ? TenantContext::getOrganizationId() : null;
     }
 
-    private function actorId(): ?int
+    private function actorId(): ?string
     {
         return auth()->id();
     }
@@ -81,9 +81,9 @@ final class LogEntryBuilder
         return $s instanceof \Illuminate\Database\Eloquent\Model ? get_class($s) : null;
     }
 
-    private function subjectId(mixed $s): ?int
+    private function subjectId(mixed $s): ?string
     {
-        return $s instanceof \Illuminate\Database\Eloquent\Model ? (int) $s->getKey() : null;
+        return $s instanceof \Illuminate\Database\Eloquent\Model ? (string) $s->getKey() : null;
     }
 
     private function subjectLabel(mixed $s): ?string

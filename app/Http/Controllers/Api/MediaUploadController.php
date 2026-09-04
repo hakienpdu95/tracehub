@@ -98,11 +98,11 @@ class MediaUploadController extends Controller
             // Single-file collection + real entity → delete old files after successful upload
             if (! ($model instanceof FilePondDraft) &&
                 in_array($collection, self::SINGLE_FILE_COLLECTIONS, true)) {
-                $this->deleteOldMedia($model, $collection, $media->uuid);
+                $this->deleteOldMedia($model, $collection, $media->id);
             }
 
             return response()->json([
-                'uuid'      => $media->uuid,
+                'uuid'      => $media->id,
                 'url'       => $this->urlService->url($media, 'medium') ?: $this->urlService->url($media),
                 'thumb_url' => $this->urlService->url($media, 'thumb')  ?: $this->urlService->url($media),
                 'original'  => $this->urlService->url($media),
@@ -131,7 +131,7 @@ class MediaUploadController extends Controller
     public function destroy(string $uuid): JsonResponse
     {
         $media = Media::withoutTenant()
-            ->where('uuid', $uuid)
+            ->where('id', $uuid)
             ->where('organization_id', TenantContext::getOrganizationId())
             ->first();
 
@@ -213,7 +213,7 @@ class MediaUploadController extends Controller
             ->where('model_type', get_class($model))
             ->where('model_id', $model->getKey())
             ->where('collection_name', $collection)
-            ->where('uuid', '!=', $keepUuid)
+            ->where('id', '!=', $keepUuid)
             ->get()
             ->each(fn (Media $m) => $this->uploadService->delete($m));
     }

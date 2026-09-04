@@ -23,7 +23,7 @@ class StoreUserData extends Data
         public readonly string $password,
 
         #[Required, Exists('organizations', 'id')]
-        public readonly int $organization_id,
+        public readonly string $organization_id,
 
         #[Nullable, StringType, Max(50)]
         public readonly ?string $department,

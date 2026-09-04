@@ -66,7 +66,7 @@ trait BelongsToOrganization
     }
 
     /** Explicit scope to switch to a specific organization's data. */
-    public function scopeForOrganization($query, int $organizationId)
+    public function scopeForOrganization($query, string $organizationId)
     {
         return $query->withoutGlobalScope(OrganizationScope::class)
             ->where($this->getTable() . '.organization_id', $organizationId);

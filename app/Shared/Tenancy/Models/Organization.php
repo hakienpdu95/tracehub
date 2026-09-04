@@ -5,6 +5,7 @@ namespace App\Shared\Tenancy\Models;
 use App\Models\User;
 use App\Shared\Tenancy\Enums\OrganizationStatus;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +16,7 @@ use Laravelcm\Subscriptions\Traits\HasPlanSubscriptions;
 class Organization extends Model
 {
     use HasFactory;
+    use HasUlids;
     use HasPlanSubscriptions;
 
     /** Morph alias — ensures consistent subscriber_type regardless of subclass. */
@@ -24,7 +26,6 @@ class Organization extends Model
     }
 
     protected $fillable = [
-        'uuid',
         'name',
         'slug',
         'status',
@@ -55,9 +56,6 @@ class Organization extends Model
         parent::boot();
 
         static::creating(function (Organization $org): void {
-            if (empty($org->uuid)) {
-                $org->uuid = (string) Str::uuid();
-            }
             if (empty($org->slug)) {
                 $org->slug = static::generateSlug($org->name);
             }

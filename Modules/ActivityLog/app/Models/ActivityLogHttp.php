@@ -2,11 +2,14 @@
 
 namespace Modules\ActivityLog\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Modules\ActivityLog\Enums\HttpMethod;
 
 class ActivityLogHttp extends Model
 {
+    use HasUlids;
+
     public $timestamps = false;
 
     protected $table = 'activity_log_http';

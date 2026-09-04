@@ -23,7 +23,7 @@ class UserApiController extends Controller
             'page'            => ['nullable', 'integer', 'min:1'],
             'size'            => ['nullable', 'integer', 'min:5', 'max:100'],
             'search'          => ['nullable', 'string', 'max:200'],
-            'organization_id' => ['nullable', 'integer', 'min:1'],
+            'organization_id' => ['nullable', 'string'],
             'role'            => ['nullable', 'string', Rule::in(collect(RoleEnum::cases())->map(fn ($r) => $r->value)->all())],
             'status'          => ['nullable', 'string', 'in:0,1'],
             'date_from'       => ['nullable', 'date_format:Y-m-d'],
@@ -39,7 +39,7 @@ class UserApiController extends Controller
 
         if ($isAdmin) {
             $orgId = $request->filled('organization_id')
-                ? (int) $request->input('organization_id')
+                ? $request->input('organization_id')
                 : null;
         } else {
             $orgId = TenantContext::getOrganizationId()

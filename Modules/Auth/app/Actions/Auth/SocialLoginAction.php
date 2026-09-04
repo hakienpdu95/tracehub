@@ -17,13 +17,13 @@ class SocialLoginAction
     use AsAction;
 
     /**
-     * @param  int|null  $authenticatedUserId  Auth::id() của request hiện tại.
+     * @param  string|null  $authenticatedUserId  Auth::id() của request hiện tại.
      *                                          Null = user chưa đăng nhập (luồng login).
      *                                          Non-null = user đang link thêm social account.
      *                                          Dùng để abort TRƯỚC khi write DB nếu phát hiện conflict,
      *                                          tránh tạo ghost user.
      */
-    public function handle(string $provider, SocialUser $socialUser, ?int $authenticatedUserId = null): SocialLoginResult
+    public function handle(string $provider, SocialUser $socialUser, ?string $authenticatedUserId = null): SocialLoginResult
     {
         $this->assertProviderAllowed($provider);
 

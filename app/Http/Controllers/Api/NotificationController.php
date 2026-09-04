@@ -164,7 +164,7 @@ class NotificationController extends Controller
     {
         return $request->user()
             ->notifications()
-            ->where('uuid', $uuid)
+            ->where('id', $uuid)
             ->firstOrFail();
     }
 
@@ -173,7 +173,7 @@ class NotificationController extends Controller
         $data = $n->data;
 
         return [
-            'uuid'       => $n->uuid ?? $n->id,
+            'uuid'       => $n->id,
             'type'       => $data['type']     ?? 'unknown',
             'title'      => $data['title']    ?? $data['message'] ?? '(Thông báo)',
             'body'       => $data['body']     ?? $data['message'] ?? '',

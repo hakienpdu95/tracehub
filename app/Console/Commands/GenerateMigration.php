@@ -358,14 +358,12 @@ class GenerateMigration extends Command
             $fields[] = $this->buildColumn($colName, $colType, $colLen, $colNull, $colDefault, $colMod, $colComment);
         }
 
-        // Luôn tự động prepend 3 cột đầu chuẩn Laravel 13 — không phụ thuộc JSON:
-        //   1. id()           — bigIncrements + primary key
-        //   2. uuid()         — public UUID để expose ra ngoài (không phải PK)
-        //   3. order_column   — Spatie Sortable / ORDER BY
+        // Luôn tự động prepend 2 cột đầu chuẩn — không phụ thuộc JSON:
+        //   1. ulid('id')->primary() — khóa chính ULID (sortable, non-guessable — thay bigint auto-increment)
+        //   2. order_column          — Spatie Sortable / ORDER BY
         array_unshift(
             $fields,
-            '$table->id();',
-            "\$table->uuid()->nullable()->unique()->comment('Public UUID — expose ra ngoài, không phải PK');",
+            "\$table->ulid('id')->primary();",
             "\$table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');"
         );
 
@@ -448,7 +446,7 @@ class GenerateMigration extends Command
 
     private function buildForeignId(string $name, bool $nullable, string $mod, string $comment): string
     {
-        $def = "\$table->foreignId('$name')";
+        $def = "\$table->foreignUlid('$name')";
         if ($nullable) $def .= '->nullable()';
         $def .= $this->normalizeOnDelete($mod);
         if ($comment !== '__') $def .= "->comment('" . addslashes($comment) . "')";

@@ -28,7 +28,7 @@ abstract class TenantAwareJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public readonly ?int $organizationId;
+    public readonly ?string $organizationId;
 
     public function __construct()
     {

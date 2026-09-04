@@ -10,8 +10,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('activity_log_contexts', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('log_id');
+            $table->ulid('id')->primary();
+            $table->ulid('log_id');
             $table->string('key_name', 64);
             $table->unsignedTinyInteger('value_type')->default(1)
                   ->comment('1=string 2=integer 3=decimal 4=boolean 5=datetime');

@@ -34,7 +34,7 @@ final class TenantContext
         return static::$organization;
     }
 
-    public static function getOrganizationId(): ?int
+    public static function getOrganizationId(): ?string
     {
         return static::$organization?->id;
     }

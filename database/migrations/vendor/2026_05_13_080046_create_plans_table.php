@@ -16,7 +16,7 @@ return new class extends Migration
         }
 
         Schema::create(config('laravel-subscriptions.tables.plans'), function (Blueprint $table): void {
-            $table->id();
+            $table->ulid('id')->primary();
 
             $table->json('name');
             $table->string('slug')->unique();

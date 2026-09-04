@@ -32,19 +32,19 @@ class MediaMigrateService
         $sourceDisk = $media->disk;
 
         if ($sourceDisk === $targetDisk) {
-            return ['status' => 'skipped', 'reason' => 'already on target', 'uuid' => $media->uuid];
+            return ['status' => 'skipped', 'reason' => 'already on target', 'uuid' => $media->id];
         }
 
         $baseDir = rtrim(dirname($media->getPathRelativeToRoot()), '/');
 
         if (! Storage::disk($sourceDisk)->exists($media->getPathRelativeToRoot())) {
-            return ['status' => 'skipped', 'reason' => 'source file missing', 'uuid' => $media->uuid];
+            return ['status' => 'skipped', 'reason' => 'source file missing', 'uuid' => $media->id];
         }
 
         $files = Storage::disk($sourceDisk)->files($baseDir);
 
         if ($dryRun) {
-            return ['status' => 'dry_run', 'files' => $files, 'uuid' => $media->uuid];
+            return ['status' => 'dry_run', 'files' => $files, 'uuid' => $media->id];
         }
 
         $copied = [];
@@ -85,7 +85,7 @@ class MediaMigrateService
         // Delete source directory after successful DB update
         Storage::disk($sourceDisk)->deleteDirectory($baseDir);
 
-        return ['status' => 'migrated', 'files' => count($copied), 'uuid' => $media->uuid];
+        return ['status' => 'migrated', 'files' => count($copied), 'uuid' => $media->id];
     }
 
     /**
@@ -109,7 +109,6 @@ class MediaMigrateService
             } catch (\Throwable $e) {
                 Log::error('MediaMigrateService: migration failed', [
                     'media_id' => $media->id,
-                    'uuid'     => $media->uuid,
                     'error'    => $e->getMessage(),
                 ]);
                 $results['failed']++;
@@ -124,7 +123,7 @@ class MediaMigrateService
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function buildMigrateQuery(string $fromDisk, ?string $collection = null, ?int $orgId = null)
+    public function buildMigrateQuery(string $fromDisk, ?string $collection = null, ?string $orgId = null)
     {
         $q = Media::withoutTenant()->where('disk', $fromDisk);
 
@@ -142,7 +141,7 @@ class MediaMigrateService
     /**
      * Partition a collection of files into batches of $size.
      */
-    public function chunkQuery(string $fromDisk, int $batchSize, ?string $collection, ?int $orgId): Collection
+    public function chunkQuery(string $fromDisk, int $batchSize, ?string $collection, ?string $orgId): Collection
     {
         return $this->buildMigrateQuery($fromDisk, $collection, $orgId)
             ->orderBy('id')

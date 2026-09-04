@@ -4,6 +4,7 @@ namespace Modules\ActivityLog\Actions;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Modules\ActivityLog\Data\LogEntryData;
 
@@ -20,9 +21,12 @@ class WriteActivityLogAction
         });
     }
 
-    private function writeMainLog(LogEntryData $entry): int
+    private function writeMainLog(LogEntryData $entry): string
     {
-        return DB::table('activity_log')->insertGetId([
+        $id = (string) Str::ulid();
+
+        DB::table('activity_log')->insert([
+            'id'              => $id,
             'log_name'        => "{$entry->module}.{$entry->action}",
             'description'     => $entry->description ?? $entry->action,
             'subject_type'    => $entry->subjectType,
@@ -42,9 +46,11 @@ class WriteActivityLogAction
             'created_at'      => $entry->loggedAt->format('Y-m-d H:i:s'),
             'updated_at'      => now(),
         ]);
+
+        return $id;
     }
 
-    private function writeContexts(int $logId, array $context): void
+    private function writeContexts(string $logId, array $context): void
     {
         if (empty($context)) return;
 
@@ -55,7 +61,7 @@ class WriteActivityLogAction
         DB::table('activity_log_contexts')->insert($rows);
     }
 
-    private function writeHttp(int $logId, LogEntryData $entry): void
+    private function writeHttp(string $logId, LogEntryData $entry): void
     {
         if ($entry->http === null) return;
 
@@ -64,6 +70,7 @@ class WriteActivityLogAction
         $cached = Cache::pull("actlog:http_ctx:{$entry->requestId}");
 
         DB::table('activity_log_http')->insert([
+            'id'          => (string) Str::ulid(),
             'log_id'      => $logId,
             'http_method' => $entry->http->method->value,
             'url'         => $entry->http->url,
@@ -75,9 +82,10 @@ class WriteActivityLogAction
         ]);
     }
 
-    private function buildContextRow(int $logId, string $key, mixed $value): array
+    private function buildContextRow(string $logId, string $key, mixed $value): array
     {
         $row = [
+            'id'           => (string) Str::ulid(),
             'log_id'       => $logId,
             'key_name'     => substr($key, 0, 64),
             'value_type'   => 1,

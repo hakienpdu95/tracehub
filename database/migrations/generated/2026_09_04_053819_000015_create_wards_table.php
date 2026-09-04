@@ -16,8 +16,7 @@ return new class extends Migration
         }
 
         Schema::create('wards', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->nullable()->unique()->comment('Public UUID — expose ra ngoài, không phải PK');
+            $table->ulid('id')->primary();
             $table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');
             $table->string('name', 255)->index()->comment('Tên phường/xã');
             $table->char('ward_code', 5)->unique()->index()->comment('Mã phường/xã');

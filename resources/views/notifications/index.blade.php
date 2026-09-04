@@ -95,7 +95,7 @@
         $icon     = $data['icon']     ?? 'bell';
         $severity = $data['severity'] ?? 'info';
         $isRead   = $n->read_at !== null;
-        $uuid     = $n->uuid ?? $n->id;
+        $uuid     = $n->id;
     @endphp
     <div class="nc-item {{ $isRead ? '' : 'nc-item--unread' }}">
 

@@ -135,7 +135,7 @@ class MediaUploadService
         }
 
         Media::withoutTenant()
-            ->whereIn('uuid', $uuids)
+            ->whereIn('id', $uuids)
             ->where('collection_name', 'jodit_content')
             ->get()
             ->each(function (Media $media) use ($model) {
@@ -149,7 +149,7 @@ class MediaUploadService
             ->where('model_type', get_class($model))
             ->where('model_id', $model->getKey())
             ->where('collection_name', 'jodit_content')
-            ->whereNotIn('uuid', $uuids)
+            ->whereNotIn('id', $uuids)
             ->get()
             ->each(fn (Media $m) => $this->delete($m));
     }
@@ -170,7 +170,7 @@ class MediaUploadService
         }
 
         Media::withoutTenant()
-            ->whereIn('uuid', $uuids)
+            ->whereIn('id', $uuids)
             ->where('collection_name', $collection)
             ->get()
             ->each(function (Media $media) use ($model) {
@@ -184,7 +184,7 @@ class MediaUploadService
             ->where('model_type', get_class($model))
             ->where('model_id', $model->getKey())
             ->where('collection_name', $collection)
-            ->whereNotIn('uuid', $uuids)
+            ->whereNotIn('id', $uuids)
             ->get()
             ->each(fn (Media $m) => $this->delete($m));
     }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (! Schema::hasTable('jobs')) {
             Schema::create('jobs', function (Blueprint $table) {
-                $table->id();
+                $table->ulid('id')->primary();
                 $table->string('queue')->index();
                 $table->longText('payload');
                 $table->unsignedSmallInteger('attempts');
@@ -40,7 +40,7 @@ return new class extends Migration
 
         if (! Schema::hasTable('failed_jobs')) {
             Schema::create('failed_jobs', function (Blueprint $table) {
-                $table->id();
+                $table->ulid('id')->primary();
                 $table->string('uuid')->unique();
                 $table->text('connection');
                 $table->text('queue');

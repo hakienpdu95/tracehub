@@ -36,9 +36,9 @@ class MediaPathGenerator implements PathGenerator
         $module     = $this->resolveModule($media->model_type);
         $entityType = Str::snake(class_basename($media->model_type));
         $entityId   = $media->model_id;
-        $uuid       = $media->uuid;
+        $id         = $media->id;
 
-        return "media/{$orgId}/{$module}/{$entityType}/{$entityId}/{$uuid}";
+        return "media/{$orgId}/{$module}/{$entityType}/{$entityId}/{$id}";
     }
 
     private function resolveModule(string $modelType): string

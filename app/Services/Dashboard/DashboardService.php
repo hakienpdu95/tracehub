@@ -31,7 +31,7 @@ class DashboardService
 
     // ── Recent Activity ───────────────────────────────────────────────────────
 
-    private function recentActivity(?int $orgId): Collection
+    private function recentActivity(?string $orgId): Collection
     {
         return ActivityLog::where(function ($q) use ($orgId) {
                 $q->where('organization_id', $orgId)
