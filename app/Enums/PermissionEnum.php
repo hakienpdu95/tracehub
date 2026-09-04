@@ -47,6 +47,10 @@ enum PermissionEnum: string
     // Đã bị gỡ cùng Modules/Assessment (cleanup/remove-non-competency-modules).
     // assessment.view/config/results/reprocess không còn permission nào tham chiếu.
 
+    // ══ VENDOR (Quản lý Nhà cung cấp) ════════════════════════════════
+    case VENDOR_VIEW   = 'vendor.view';
+    case VENDOR_MANAGE = 'vendor.manage';
+
     // ══ SUBSCRIPTION ═══════════════════════════════════════════════
     // Chỉ còn VIEW — MANAGE/BILLING/ADMIN gate các route quản trị thuộc
     // Modules/Subscription (đã xóa, xem cleanup/remove-non-competency-modules).

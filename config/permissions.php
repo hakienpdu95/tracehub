@@ -22,6 +22,7 @@ return [
         P::AI_COPILOT_VIEW_USAGE->value,
         // Users: View
         P::USERS_VIEW->value,
+        P::VENDOR_VIEW->value,
         // Export dữ liệu nhạy cảm: Full — CEO phê duyệt export (SoD)
         P::EXPORT_REQUEST_VIEW->value,
         P::EXPORT_REQUEST_APPROVE->value,
@@ -44,6 +45,8 @@ return [
         // AI Copilot: Use + View usage
         P::AI_COPILOT_USE->value,
         P::AI_COPILOT_VIEW_USAGE->value,
+        P::VENDOR_VIEW->value,
+        P::VENDOR_MANAGE->value,
         // Export dữ liệu nhạy cảm: View (minh bạch nội bộ)
         P::EXPORT_REQUEST_VIEW->value,
     ],
@@ -102,6 +105,8 @@ return [
         P::INTEGRATION_MANAGE->value,
         P::AUDIT_VIEW->value,
         P::SYSTEM_CONFIG->value,
+        P::VENDOR_VIEW->value,
+        P::VENDOR_MANAGE->value,
         // Export dữ liệu nhạy cảm: Full — System Admin phê duyệt export (SoD)
         P::EXPORT_REQUEST_VIEW->value,
         P::EXPORT_REQUEST_APPROVE->value,

@@ -81,6 +81,8 @@ class RolePermissionSeeder extends Seeder
 
                 P::AUDIT_VIEW->value,
 
+                P::VENDOR_VIEW->value,
+
                 // Export dữ liệu nhạy cảm: Full — CEO phê duyệt export (SoD chặn tự duyệt request của mình)
                 P::EXPORT_REQUEST_VIEW->value,
                 P::EXPORT_REQUEST_APPROVE->value,
@@ -102,6 +104,9 @@ class RolePermissionSeeder extends Seeder
                 P::CEO_DASH_VIEW->value,
 
                 P::AI_LOGS_VIEW->value,
+
+                P::VENDOR_VIEW->value,
+                P::VENDOR_MANAGE->value,
 
                 // Export dữ liệu nhạy cảm: view (minh bạch nội bộ) — KHÔNG approve
                 P::EXPORT_REQUEST_VIEW->value,
@@ -162,6 +167,9 @@ class RolePermissionSeeder extends Seeder
                 P::INTEGRATION_MANAGE->value,
                 P::AUDIT_VIEW->value,
                 P::SYSTEM_CONFIG->value,
+
+                P::VENDOR_VIEW->value,
+                P::VENDOR_MANAGE->value,
 
                 // Export dữ liệu nhạy cảm: Full — System Admin phê duyệt export (SoD chặn tự duyệt request của mình)
                 P::EXPORT_REQUEST_VIEW->value,

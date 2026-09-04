@@ -46,6 +46,22 @@
                 </div>
             </details>
 
+            @can('vendor.view')
+            <details {{ request()->routeIs('backend.vendors.*') ? 'open' : '' }}>
+                <summary class="nav-summary {{ request()->routeIs('backend.vendors.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h18v4H3V3zm2 4h14v14H5V7zm3 4h8m-8 4h5"/></svg>
+                    <span class="nav-label">Nhà cung cấp</span>
+                    <svg class="nav-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m9 18 6-6-6-6"/></svg>
+                </summary>
+                <div class="sub-menu">
+                    <a href="{{ route('backend.vendors.index') }}" class="sub-link {{ request()->routeIs('backend.vendors.index') ? 'active' : '' }}">Danh sách nhà cung cấp</a>
+                    @can('vendor.manage')
+                    <a href="{{ route('backend.vendors.create') }}" class="sub-link {{ request()->routeIs('backend.vendors.create') ? 'active' : '' }}">Thêm nhà cung cấp</a>
+                    @endcan
+                </div>
+            </details>
+            @endcan
+
             {{-- Project đã bị gỡ (cleanup/remove-non-competency-modules). --}}
 
             {{-- AI Copilot (Usage Dashboard/Request Logs/AI Agents/Prompt Library) và

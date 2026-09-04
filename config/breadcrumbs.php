@@ -46,6 +46,8 @@ return [
         'department'          => 'Phòng ban',
         'job-titles'          => 'Chức danh',
         'organizations'       => 'Tổ chức',
+        'vendors'             => 'Nhà cung cấp',
+        'certificates'        => 'Chứng chỉ',
         'org-charts'          => 'Sơ đồ tổ chức',
         'role-scopes'         => 'Phạm vi vai trò',
         'users'               => 'Người dùng',

@@ -358,12 +358,13 @@ class GenerateMigration extends Command
             $fields[] = $this->buildColumn($colName, $colType, $colLen, $colNull, $colDefault, $colMod, $colComment);
         }
 
-        // Luôn tự động prepend 2 cột đầu chuẩn — không phụ thuộc JSON:
-        //   1. ulid('id')->primary() — khóa chính ULID (sortable, non-guessable — thay bigint auto-increment)
-        //   2. order_column          — Spatie Sortable / ORDER BY
+        $idColumn = $tableName === 'notifications'
+            ? "\$table->uuid('id')->primary();"
+            : "\$table->ulid('id')->primary();";
+
         array_unshift(
             $fields,
-            "\$table->ulid('id')->primary();",
+            $idColumn,
             "\$table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');"
         );
 

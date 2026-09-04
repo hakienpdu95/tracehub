@@ -2,5 +2,6 @@
     "Auth": true,
     "Organization": true,
     "User": true,
-    "ActivityLog": true
+    "ActivityLog": true,
+    "Vendor": true
 }

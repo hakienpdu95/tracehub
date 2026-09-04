@@ -16,7 +16,7 @@ return new class extends Migration
         }
 
         Schema::create('notifications', function (Blueprint $table) {
-            $table->ulid('id')->primary();
+            $table->uuid('id')->primary();
             $table->unsignedInteger('order_column')->nullable()->index()->comment('Thứ tự sắp xếp — Spatie Sortable / ORDER BY');
             $table->string('type');
             $table->string('notifiable_type');

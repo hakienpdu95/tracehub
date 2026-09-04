@@ -2,6 +2,8 @@
 
 Dưới đây là roadmap chi tiết các module và phân hệ kỹ thuật, được "đo ni đóng giày" để tuân thủ 5 văn bản pháp luật cốt lõi mà bạn đã tổng hợp:
 
+> **Quy ước thiết kế khóa chính/khóa ngoại:** toàn bộ khóa chính `id` của mọi bảng trong tài liệu này dùng **ULID** (chuỗi 26 ký tự, sortable theo thời gian, an toàn để lộ ra ngoài qua API/QR) thay cho `BigIncrements`/auto-increment hoặc UUID v4 ngẫu nhiên truyền thống. Mọi khóa ngoại (`*_id`, kể cả các cặp khóa đa hình `*_type`/`*_id`) tham chiếu tới các bảng này cũng dùng cùng kiểu ULID.
+
 ### Module 1: Quản trị Dữ liệu lõi & Hồ sơ Pháp lý (Master Data & Compliance)
 
 Module này là nền tảng database để phân loại và lưu trữ minh chứng pháp lý, đảm bảo hàng hóa đủ điều kiện lưu thông.
@@ -95,7 +97,7 @@ Hệ thống sẽ sử dụng mô hình RBAC tiêu chuẩn kết hợp với b�
 * Bảng `users`: Quản lý thông tin tài khoản nội bộ (`id`, `name`, `email`, `password`, `is_active`).
 * Bảng `roles` và `permissions`: Định nghĩa vai trò và các đặc quyền cụ thể (Ví dụ: `approve_compliance`, `initiate_recall`, `scan_pos`).
 * Bảng `model_has_roles` và `role_has_permissions`: Các bảng trung gian (Pivot tables) gắn kết người dùng với quyền hạn.
-* Bảng `audit_logs`: Lưu vết mọi thao tác thay đổi dữ liệu quan trọng (`user_id`, `action`, `model_type`, `model_id`, `old_values`, `new_values`).
+* Bảng `audit_logs`: Lưu vết mọi thao tác thay đổi dữ liệu quan trọng (`user_id`, `action`, `model_type`, `model_id`, `old_values`, `new_values` — `user_id`/`model_id` đều là ULID).
 
 ### Ma trận Phân quyền cốt lõi (Role Matrix)
 
@@ -140,7 +142,7 @@ Bảng này lưu trữ các thông tin định danh cố định của nhà cung
 
 | Tên trường (Column) | Kiểu dữ liệu (Type) | Mục đích & Căn cứ pháp lý |
 | --- | --- | --- |
-| `id` | BigIncrements | Khóa chính (Primary Key). |
+| `id` | ULID | Khóa chính (Primary Key) — chuỗi ULID 26 ký tự, sortable theo thời gian, an toàn để lộ ra ngoài (thay BigIncrements/UUID v4 truyền thống). |
 | `vendor_code` | String(50), Unique | Mã quản lý nội bộ hoặc lưu "Tiền tố mã doanh nghiệp" để đồng bộ với định dạng mã truy vết vận chuyển/địa điểm.
 
  |
@@ -173,8 +175,8 @@ Bảng này lưu trữ các thông tin định danh cố định của nhà cung
 
 | Tên trường (Column) | Kiểu dữ liệu (Type) | Mục đích & Căn cứ pháp lý |
 | --- | --- | --- |
-| `id` | BigIncrements | Khóa chính. |
-| `vendor_id` | UnsignedBigInt | Khóa ngoại (Foreign Key) liên kết với bảng `vendors`. |
+| `id` | ULID | Khóa chính (ULID). |
+| `vendor_id` | ULID | Khóa ngoại (Foreign Key, ULID) liên kết với bảng `vendors`. |
 | `certificate_type` | Enum / String | Phân loại: Đăng ký kinh doanh, Giấy chứng nhận cơ sở đủ điều kiện ATTP, Thực hành sản xuất tốt (GMP)....
 
  |
@@ -215,7 +217,7 @@ Dưới đây là thiết kế chi tiết các bảng (Tables) cốt lõi, ý ng
 
 Bảng này lưu trữ các thông tin chung nhất về mặt vật lý của một sản phẩm, không chứa thông tin pháp lý (vì hồ sơ pháp lý có thể được cập nhật/gia hạn theo thời gian).
 
-* `id`: Primary Key.
+* `id`: Khóa chính (ULID).
 * `sku`: Mã nội bộ của sản phẩm.
 * `barcode`: Mã vạch in trên bao bì.
 * `name`: Tên sản phẩm.
@@ -299,8 +301,8 @@ File tải lên sẽ được lưu trữ vào hệ thống storage bảo mật c
 
 Bảng này liên kết 1-N (One-to-Many) với bảng `products`. Việc tách riêng giúp bạn lưu lại *lịch sử* gia hạn giấy tờ (ví dụ: công bố cũ hết hạn, nhà cung cấp gửi bản công bố mới, bạn sẽ tạo một record mới thay vì ghi đè, giúp đảm bảo tính toàn vẹn khi truy xuất dữ liệu trong quá khứ).
 
-* `id`: Primary Key.
-* `product_id`: Khóa ngoại trỏ về bảng `products`.
+* `id`: Khóa chính (ULID).
+* `product_id`: Khóa ngoại (ULID) trỏ về bảng `products`.
 * `document_type`: Loại giấy tờ (Enum: `self_declaration` - Bản tự công bố, `registered_declaration` - Bản đăng ký công bố, `cosmetic_notification` - Phiếu công bố mỹ phẩm).
 
 
@@ -324,9 +326,9 @@ Bảng này liên kết 1-N (One-to-Many) với bảng `products`. Việc tách 
 
 Đây là bảng giải quyết triệt để bài toán: "Sản phẩm này, thuộc lô này, được nhập từ ai và khi nào?". Bảng này thực thi nguyên tắc truy xuất "một bước trước".
 
-* `id`: Primary Key.
-* `product_id`: Khóa ngoại trỏ về `products` (Biết là sản phẩm gì).
-* `vendor_id`: Khóa ngoại trỏ về `vendors` (Biết nhập từ Nhà cung cấp nào).
+* `id`: Khóa chính (ULID).
+* `product_id`: Khóa ngoại (ULID) trỏ về `products` (Biết là sản phẩm gì).
+* `vendor_id`: Khóa ngoại (ULID) trỏ về `vendors` (Biết nhập từ Nhà cung cấp nào).
 * `batch_number`: Số lô in trên bao bì (Bắt buộc nhập).
 
 
@@ -374,8 +376,8 @@ Xây dựng một phân hệ cảnh báo chạy ngầm (Cronjob) trong Laravel l
 
 Bảng này sẽ ghi nhận mọi bất thường do hệ thống Cronjob quét được hàng ngày:
 
-* `id`: Khóa chính.
-* `warnable_type` và `warnable_id`: Cặp khóa ngoại đa hình (Polymorphic relations trong Laravel) trỏ đến bảng `product_compliances` hoặc bảng `batches`.
+* `id`: Khóa chính (ULID).
+* `warnable_type` và `warnable_id`: Cặp khóa ngoại đa hình (Polymorphic relations trong Laravel, `warnable_id` kiểu ULID) trỏ đến bảng `product_compliances` hoặc bảng `batches`.
 * `alert_type`: Phân loại cảnh báo (Ví dụ: `document_expiring`, `batch_expiring`).
 * `warning_level`: Mức độ nghiêm trọng (Vàng - Báo trước 60 ngày, Đỏ - Báo trước 15 ngày hoặc đã quá hạn).
 * `message`: Nội dung thông báo tự động (Ví dụ: "Phiếu công bố của Sữa tắm X sẽ hết hạn vào ngày Y").
@@ -420,7 +422,7 @@ Bạn sẽ cấu hình file `app/Console/Kernel.php` để chạy lệnh quét D
 **1. Bảng `company_prefixes` (Tiền tố mã doanh nghiệp)**
 Bảng này lưu trữ dải số định danh do cơ quan quản lý nhà nước cấp cho doanh nghiệp của bạn.
 
-* `id`: Khóa chính.
+* `id`: Khóa chính (ULID).
 * `prefix_value`: Chuỗi 7-10 chữ số.
 
 
@@ -429,11 +431,11 @@ Bảng này lưu trữ dải số định danh do cơ quan quản lý nhà nư�
 **2. Bảng `tracing_codes` (Lưu trữ Mã truy vết gốc)**
 Bảng này lưu trữ các cấu trúc mã 13, 14 hoặc 18 số đã được sinh ra. Không được thay đổi mã truy vết đã cấp trong suốt thời gian tồn tại của vật phẩm hoặc đơn vị logistic.
 
-* `id`: Khóa chính.
+* `id`: Khóa chính (ULID).
 * `application_identifier`: Số định danh ứng dụng (01, 414, hoặc 00).
 
 
-* `company_prefix_id`: Liên kết đến bảng `company_prefixes`.
+* `company_prefix_id`: Liên kết (ULID) đến bảng `company_prefixes`.
 * `reference_number`: Số tham chiếu vật phẩm, địa điểm hoặc vận chuyển.
 
 
@@ -446,12 +448,12 @@ Bảng này lưu trữ các cấu trúc mã 13, 14 hoặc 18 số đã được 
 **3. Bảng `retail_item_tags` (Tem truy vết dán lên từng sản phẩm)**
 Đây là bảng giải quyết bài toán tracking và audit cho mỗi hộp sản phẩm vật lý được tách ra từ lô nhập.
 
-* `id`: Khóa chính.
-* `batch_id`: Liên kết đến bảng quản lý lô nhập.
-* `tracing_code_id`: Liên kết đến bảng `tracing_codes` để biết đây là mã vật phẩm nào.
+* `id`: Khóa chính (ULID).
+* `batch_id`: Liên kết (ULID) đến bảng quản lý lô nhập.
+* `tracing_code_id`: Liên kết (ULID) đến bảng `tracing_codes` để biết đây là mã vật phẩm nào.
 * `serial_number`: Số chuỗi nhảy tự động cho từng sản phẩm trong cùng một lô (Ví dụ: 001 đến 100).
 * `qr_content`: Nội dung chuỗi dữ liệu nhúng vào mã QR in ra giấy (Bao gồm Full Code 14 số + Số lô + Serial).
-* `current_location_id`: Liên kết đến Mã truy vết địa điểm hiện tại của sản phẩm.
+* `current_location_id`: Liên kết (ULID) đến Mã truy vết địa điểm hiện tại của sản phẩm.
 
 
 * `status`: Trạng thái vật lý (`in_warehouse`, `on_shelf`, `sold`, `recalled`).
@@ -481,8 +483,8 @@ Dưới đây là cấu trúc cơ sở dữ liệu (Database Schema) và logic v
 **Bảng `inbound_receipts` (Quản lý Phiếu nhập kho)**
 Bảng này đóng vai trò xác định rõ thời điểm và nguồn gốc đầu vào của hàng hóa nhằm thực thi nguyên tắc lưu vết nhà cung cấp.
 
-* `id`: Khóa chính.
-* `vendor_id`: Khóa ngoại trỏ đến nhà cung cấp.
+* `id`: Khóa chính (ULID).
+* `vendor_id`: Khóa ngoại (ULID) trỏ đến nhà cung cấp.
 * `receipt_code`: Mã phiếu nhập nội bộ.
 * `receipt_date`: Ngày nhập kho thực tế.
 * `status`: Trạng thái phiếu nhập (`draft`, `completed`, `cancelled`).
@@ -490,9 +492,9 @@ Bảng này đóng vai trò xác định rõ thời điểm và nguồn gốc đ
 **Bảng `batches` (Quản lý Lô hàng & Hạn sử dụng)**
 Đây là bảng cốt lõi. Mỗi khi nhập hàng, bạn không cộng dồn số lượng vào sản phẩm chung mà sẽ tạo một "dòng lô" mới.
 
-* `id`: Khóa chính.
-* `inbound_receipt_id`: Khóa ngoại trỏ đến phiếu nhập kho (Biết lô này về từ chuyến hàng nào).
-* `product_id`: Khóa ngoại trỏ đến sản phẩm.
+* `id`: Khóa chính (ULID).
+* `inbound_receipt_id`: Khóa ngoại (ULID) trỏ đến phiếu nhập kho (Biết lô này về từ chuyến hàng nào).
+* `product_id`: Khóa ngoại (ULID) trỏ đến sản phẩm.
 * `batch_number`: Số lô sản xuất ghi trên bao bì sản phẩm. Đây là trường bắt buộc lưu trữ.
 
 
@@ -513,8 +515,8 @@ Bảng này đóng vai trò xác định rõ thời điểm và nguồn gốc đ
 **Bảng `batch_locations` (Quản lý Vị trí tồn kho của Lô)**
 Đối với bán lẻ, một lô sữa có thể vừa nằm trong kho, vừa nằm trên kệ trưng bày. Bảng này liên kết với cấu trúc Mã truy vết địa điểm đã thiết lập ở phân hệ trước để định danh vị trí vật lý.
 
-* `id`: Khóa chính.
-* `batch_id`: Khóa ngoại trỏ đến bảng `batches`.
+* `id`: Khóa chính (ULID).
+* `batch_id`: Khóa ngoại (ULID) trỏ đến bảng `batches`.
 * `location_tracing_code`: Mã truy vết địa điểm (Ví dụ: Mã kệ A1, kho B).
 
 
@@ -560,10 +562,10 @@ Dựa trên sự liên kết với phân hệ Quản lý Lô và Mã Truy vết 
 **Bảng `outbound_orders` (Quản lý Thông tin Đơn xuất kho)**
 Bảng này lưu trữ thông tin chung của một lần xuất hàng, giúp xác định "bước sau" của luồng hàng hóa là đi về đâu.
 
-* `id`: Khóa chính.
+* `id`: Khóa chính (ULID).
 * `order_code`: Mã đơn xuất (Ví dụ: POS-2608-001, WH-TRANS-002).
 * `type`: Loại phiếu xuất (`retail` - Bán lẻ POS, `wholesale` - Bán buôn, `transfer` - Chuyển kho nội bộ, `return_to_vendor` - Trả hàng nhà cung cấp).
-* `destination_type` & `destination_id`: Cặp khóa ngoại đa hình (Polymorphic).
+* `destination_type` & `destination_id`: Cặp khóa ngoại đa hình (Polymorphic, `destination_id` kiểu ULID).
 * Nếu là `retail` -> Trỏ đến bảng Khách hàng (Customer) để lưu vết người mua.
 
 
@@ -578,19 +580,19 @@ Bảng này lưu trữ thông tin chung của một lần xuất hàng, giúp x�
 **Bảng `outbound_order_items` (Chi tiết Yêu cầu Xuất)**
 Bảng này lưu trữ danh sách các mặt hàng (SKU) mà khách hàng muốn mua hoặc kho cần xuất.
 
-* `id`: Khóa chính.
-* `outbound_order_id`: Khóa ngoại trỏ đến `outbound_orders`.
-* `product_id`: Khóa ngoại trỏ đến bảng Sản phẩm (`products`).
+* `id`: Khóa chính (ULID).
+* `outbound_order_id`: Khóa ngoại (ULID) trỏ đến `outbound_orders`.
+* `product_id`: Khóa ngoại (ULID) trỏ đến bảng Sản phẩm (`products`).
 * `requested_qty`: Số lượng yêu cầu xuất.
 * `fulfilled_qty`: Số lượng thực tế đã quét mã xuất kho.
 
 **Bảng `outbound_picked_batches` (Chi tiết Lấy hàng theo Lô & Tem truy vết)**
 Đây là bảng cốt lõi thực thi FEFO và truy xuất nguồn gốc sâu đến từng đơn vị sản phẩm.
 
-* `id`: Khóa chính.
-* `outbound_order_item_id`: Khóa ngoại trỏ đến `outbound_order_items`.
-* `batch_id`: Khóa ngoại trỏ đến bảng `batches` (Ghi nhận chính xác lô hàng nào bị trừ).
-* `retail_item_tag_id`: (Nullable) Khóa ngoại trỏ đến bảng `retail_item_tags` sinh ra từ module trước. Nếu bán lẻ quét mã QR trên từng hộp, trường này sẽ lưu ID của hộp đó để tracking 1-1.
+* `id`: Khóa chính (ULID).
+* `outbound_order_item_id`: Khóa ngoại (ULID) trỏ đến `outbound_order_items`.
+* `batch_id`: Khóa ngoại (ULID) trỏ đến bảng `batches` (Ghi nhận chính xác lô hàng nào bị trừ).
+* `retail_item_tag_id`: (Nullable) Khóa ngoại (ULID) trỏ đến bảng `retail_item_tags` sinh ra từ module trước. Nếu bán lẻ quét mã QR trên từng hộp, trường này sẽ lưu ID của hộp đó để tracking 1-1.
 * `picked_qty`: Số lượng thực tế lấy từ lô này.
 
 ---
@@ -655,12 +657,12 @@ Thu ngân quét mã vạch gốc in sẵn trên vỏ hộp (Mã này chỉ mang 
 **Bảng `pos_invoices` (Hóa đơn Bán lẻ)**
 Bảng này lưu trữ thông tin tổng quan của giao dịch và đặc biệt quan trọng trong việc gắn kết với thông tin khách hàng để phục vụ truy xuất ngược.
 
-* `id`: Khóa chính.
+* `id`: Khóa chính (ULID).
 * `invoice_code`: Mã hóa đơn (Ví dụ: INV-26082026-001).
-* `customer_id`: (Nullable) Khóa ngoại trỏ đến bảng Khách hàng. Việc khuyến khích khách hàng đọc số điện thoại để tích điểm chính là cách bạn lấy data để phục vụ việc thu hồi sản phẩm lỗi sau này.
+* `customer_id`: (Nullable) Khóa ngoại (ULID) trỏ đến bảng Khách hàng. Việc khuyến khích khách hàng đọc số điện thoại để tích điểm chính là cách bạn lấy data để phục vụ việc thu hồi sản phẩm lỗi sau này.
 
 
-* `cashier_id`: Nhân viên thu ngân thực hiện giao dịch.
+* `cashier_id` (ULID): Khóa ngoại trỏ đến nhân viên thu ngân thực hiện giao dịch.
 * `total_amount`: Tổng tiền thanh toán.
 * `transaction_time`: Thời gian giao dịch chính xác.
 * `status`: Trạng thái hóa đơn (`completed`, `refunded`).
@@ -668,19 +670,19 @@ Bảng này lưu trữ thông tin tổng quan của giao dịch và đặc biệ
 **Bảng `pos_invoice_items` (Chi tiết SKU trong Hóa đơn)**
 Bảng này ghi nhận khách hàng mua những mặt hàng gì, số lượng tổng là bao nhiêu.
 
-* `id`: Khóa chính.
-* `pos_invoice_id`: Khóa ngoại trỏ đến bảng `pos_invoices`.
-* `product_id`: Khóa ngoại trỏ đến bảng `products` (SKU).
+* `id`: Khóa chính (ULID).
+* `pos_invoice_id`: Khóa ngoại (ULID) trỏ đến bảng `pos_invoices`.
+* `product_id`: Khóa ngoại (ULID) trỏ đến bảng `products` (SKU).
 * `quantity`: Tổng số lượng SKU khách mua.
 * `price`: Đơn giá tại thời điểm bán.
 
 **Bảng `pos_invoice_batches` (Lưu vết Lô & Tem Truy vết - Cốt lõi của Tracking)**
 Bảng này là cầu nối (Pivot Table) giữa dòng hóa đơn và dữ liệu tồn kho theo lô. Đây là nơi giải quyết bài toán khách mua 2 hộp sữa cùng SKU nhưng thuộc 2 lô khác nhau.
 
-* `id`: Khóa chính.
-* `pos_invoice_item_id`: Khóa ngoại trỏ đến bảng `pos_invoice_items`.
-* `batch_id`: Khóa ngoại trỏ đến bảng `batches`. Cột này ghi nhận chính xác "Số lô" (Batch Number) của hộp sản phẩm đã được bán ra.
-* `retail_item_tag_id`: (Nullable) Khóa ngoại trỏ đến bảng `retail_item_tags`. Nếu thu ngân dùng súng quét mã QR tự in (Kịch bản 1), ID của mã tem truy vết đó sẽ được lưu vào đây để hệ thống biết chính xác hộp vật lý nào đã rời khỏi cửa hàng.
+* `id`: Khóa chính (ULID).
+* `pos_invoice_item_id`: Khóa ngoại (ULID) trỏ đến bảng `pos_invoice_items`.
+* `batch_id`: Khóa ngoại (ULID) trỏ đến bảng `batches`. Cột này ghi nhận chính xác "Số lô" (Batch Number) của hộp sản phẩm đã được bán ra.
+* `retail_item_tag_id`: (Nullable) Khóa ngoại (ULID) trỏ đến bảng `retail_item_tags`. Nếu thu ngân dùng súng quét mã QR tự in (Kịch bản 1), ID của mã tem truy vết đó sẽ được lưu vào đây để hệ thống biết chính xác hộp vật lý nào đã rời khỏi cửa hàng.
 * `quantity`: Số lượng bán ra thuộc lô này. *(Ví dụ: Khách mua 2 hộp sữa Meiji, nhưng kho chỉ còn 1 hộp Lô A và lấy thêm 1 hộp Lô B. Hệ thống sẽ lưu thành 2 dòng trong bảng này: Dòng 1 ghi Lô A - SL 1; Dòng 2 ghi Lô B - SL 1).*
 
 ### 3. Logic Vận hành Quản lý Dữ liệu (Backend Logic)
@@ -709,7 +711,7 @@ Chúng ta sẽ thiết lập 2 bảng dữ liệu chính để bóc tách thông
 **Bảng `customers` (Hồ sơ Khách hàng gốc)**
 Bảng này lưu trữ thông tin định danh cốt lõi, thường được thu thập ngay tại quầy thu ngân (POS) hoặc khi khách hàng chủ động nhập thông tin trên Cổng truy xuất.
 
-* `id`: Khóa chính.
+* `id`: Khóa chính (ULID).
 * `phone`: Số điện thoại (Đóng vai trò là chuỗi định danh duy nhất - Unique Index).
 * `full_name`: Họ và tên khách hàng.
 * `loyalty_points`: Điểm tích lũy (Có thể dùng làm "mồi nhử" để khuyến khích khách hàng nhập SĐT khi quét mã ở nhà).
@@ -718,10 +720,10 @@ Bảng này lưu trữ thông tin định danh cốt lõi, thường được th
 **Bảng `traceability_scan_logs` (Lưu vết hành vi quét mã QR)**
 Đây là bảng "Append-only" (chỉ thêm mới, không ghi đè), giúp bạn kiểm toán (audit) toàn bộ hành trình quét mã của từng hộp sản phẩm vật lý.
 
-* `id`: Khóa chính.
-* `retail_item_tag_id`: Khóa ngoại trỏ đến bảng `retail_item_tags` (Định danh chính xác hộp sản phẩm mà khách đang cầm trên tay).
-* `batch_id`: Khóa ngoại trỏ đến bảng `batches` (Tối ưu tốc độ truy vấn để biết ngay lô nào đang được quét nhiều nhất).
-* `customer_id`: (Nullable) Khóa ngoại trỏ đến bảng `customers`. Có thể rỗng nếu khách chỉ quét để xem thông tin mà từ chối nhập SĐT.
+* `id`: Khóa chính (ULID).
+* `retail_item_tag_id`: Khóa ngoại (ULID) trỏ đến bảng `retail_item_tags` (Định danh chính xác hộp sản phẩm mà khách đang cầm trên tay).
+* `batch_id`: Khóa ngoại (ULID) trỏ đến bảng `batches` (Tối ưu tốc độ truy vấn để biết ngay lô nào đang được quét nhiều nhất).
+* `customer_id`: (Nullable) Khóa ngoại (ULID) trỏ đến bảng `customers`. Có thể rỗng nếu khách chỉ quét để xem thông tin mà từ chối nhập SĐT.
 * `scanned_at`: Thời gian thực hiện hành vi quét mã (Timestamp).
 * `ip_address` & `user_agent`: Lưu trữ địa chỉ IP và thông tin thiết bị (iPhone, Android) để phân tích hành vi và phát hiện gian lận.
 
@@ -763,9 +765,9 @@ Dưới đây là thiết kế chuẩn mực cho phân hệ này, tối ưu hóa
 **Bảng `product_recalls` (Quản lý Chiến dịch Thu hồi)**
 Đáp ứng quy định về việc đình chỉ lưu hành và thu hồi sản phẩm khi có yêu cầu từ cơ quan quản lý hoặc nhà sản xuất.
 
-* `id`: Khóa chính.
+* `id`: Khóa chính (ULID).
 * `recall_code`: Mã chiến dịch thu hồi (Ví dụ: RECALL-2026-08).
-* `batch_id`: Khóa ngoại trỏ đến bảng `batches` (Xác định chính xác lô hàng bị thu hồi).
+* `batch_id`: Khóa ngoại (ULID) trỏ đến bảng `batches` (Xác định chính xác lô hàng bị thu hồi).
 * `reason`: Lý do thu hồi (Ví dụ: Chứa thành phần vượt mức cho phép, Lỗi bao bì, v.v.).
 * `decision_date`: Ngày ra quyết định thu hồi.
 * `status`: Trạng thái chiến dịch (`initiating` - Đang khởi tạo, `in_progress` - Đang thu hồi, `completed` - Đã hoàn tất).
@@ -775,9 +777,9 @@ Dưới đây là thiết kế chuẩn mực cho phân hệ này, tối ưu hóa
 **Bảng `adverse_event_reports` (Báo cáo Tác dụng bất lợi)**
 Bảng này cực kỳ quan trọng đối với mảng mỹ phẩm cho mẹ và bé. Nó đáp ứng trực tiếp quy định phải báo cáo tác dụng phụ trầm trọng về Cục Quản lý dược trong vòng 07 ngày kể từ khi nhận thông tin đầu tiên.
 
-* `id`: Khóa chính.
-* `customer_id`: Khóa ngoại trỏ đến `customers` (Khách hàng gặp sự cố).
-* `retail_item_tag_id`: Khóa ngoại trỏ đến `retail_item_tags` (Biết chính xác khách đã dùng hộp sản phẩm vật lý nào).
+* `id`: Khóa chính (ULID).
+* `customer_id`: Khóa ngoại (ULID) trỏ đến `customers` (Khách hàng gặp sự cố).
+* `retail_item_tag_id`: Khóa ngoại (ULID) trỏ đến `retail_item_tags` (Biết chính xác khách đã dùng hộp sản phẩm vật lý nào).
 * `incident_date`: Ngày khách hàng báo cáo sự cố.
 * `symptoms`: Mô tả chi tiết triệu chứng (Ví dụ: Bé bị mẩn đỏ, dị ứng ngứa sau khi bôi kem).
 * `severity_level`: Mức độ nghiêm trọng (`mild` - Nhẹ, `serious` - Trầm trọng, `life_threatening` - Đe dọa tính mạng).
@@ -833,12 +835,12 @@ Bảng này sẽ mapping (ánh xạ) trực tiếp 1-1 với các trường dữ
 
 **Thông tin liên kết hệ thống (System Tracking)**
 
-* `id`: Khóa chính.
+* `id`: Khóa chính (ULID).
 * `report_code`: Mã báo cáo nội bộ (Ví dụ: AER-202608-001).
-* `retail_item_tag_id`: Khóa ngoại trỏ đến bảng tem truy vết `retail_item_tags`. (Chỉ cần ID này, hệ thống dùng Eloquent của Laravel sẽ query ngược ra ngay: Tên sản phẩm, Nhà sản xuất, Ngày sản xuất, Hạn dùng, Số lô).
+* `retail_item_tag_id`: Khóa ngoại (ULID) trỏ đến bảng tem truy vết `retail_item_tags`. (Chỉ cần ID này, hệ thống dùng Eloquent của Laravel sẽ query ngược ra ngay: Tên sản phẩm, Nhà sản xuất, Ngày sản xuất, Hạn dùng, Số lô).
 
 
-* `customer_id`: Khóa ngoại trỏ đến người mua hàng trong bảng `customers`.
+* `customer_id`: Khóa ngoại (ULID) trỏ đến người mua hàng trong bảng `customers`.
 
 **Thông tin chi tiết người sử dụng (Victim Details)**
 Lưu ý: Khách mua là mẹ, nhưng người sử dụng có thể là em bé, nên cần tách bạch theo đúng Phụ lục 18-MP.
