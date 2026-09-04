@@ -42,26 +42,35 @@ class StoreVendorData extends Data
     public static function messages(): array
     {
         return [
+            'vendor_code.string' => 'Mã nhà cung cấp không hợp lệ.',
             'vendor_code.regex'  => 'Mã nhà cung cấp chỉ được chứa chữ, số và dấu gạch ngang.',
             'vendor_code.max'    => 'Mã nhà cung cấp không được vượt quá 50 ký tự.',
             'vendor_code.unique' => 'Mã nhà cung cấp này đã tồn tại.',
 
             'name.required' => 'Vui lòng nhập tên nhà cung cấp.',
+            'name.string'   => 'Tên nhà cung cấp không hợp lệ.',
             'name.max'      => 'Tên nhà cung cấp không được vượt quá 255 ký tự.',
 
             'tax_code.required' => 'Vui lòng nhập mã số thuế.',
+            'tax_code.string'   => 'Mã số thuế không hợp lệ.',
             'tax_code.max'      => 'Mã số thuế không được vượt quá 50 ký tự.',
             'tax_code.unique'   => 'Mã số thuế này đã được đăng ký bởi nhà cung cấp khác.',
 
-            'address.max'       => 'Địa chỉ không được vượt quá 500 ký tự.',
-            'phone_number.max'  => 'Số điện thoại không được vượt quá 20 ký tự.',
+            'address.string' => 'Địa chỉ không hợp lệ.',
+            'address.max'    => 'Địa chỉ không được vượt quá 500 ký tự.',
 
-            'email.email' => 'Email không đúng định dạng.',
-            'email.max'   => 'Email không được vượt quá 100 ký tự.',
+            'phone_number.string' => 'Số điện thoại không hợp lệ.',
+            'phone_number.max'    => 'Số điện thoại không được vượt quá 20 ký tự.',
 
-            'representative_name.max' => 'Tên người đại diện không được vượt quá 100 ký tự.',
+            'email.string' => 'Email không hợp lệ.',
+            'email.email'  => 'Email không đúng định dạng.',
+            'email.max'    => 'Email không được vượt quá 100 ký tự.',
+
+            'representative_name.string' => 'Tên người đại diện không hợp lệ.',
+            'representative_name.max'    => 'Tên người đại diện không được vượt quá 100 ký tự.',
 
             'status.required' => 'Vui lòng chọn trạng thái.',
+            'status.enum'     => 'Trạng thái không hợp lệ.',
         ];
     }
 }

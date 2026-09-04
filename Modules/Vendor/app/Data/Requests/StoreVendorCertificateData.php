@@ -53,17 +53,22 @@ class StoreVendorCertificateData extends Data
             'certificate_type.enum'     => 'Loại chứng chỉ không hợp lệ.',
 
             'certificate_number.required' => 'Vui lòng nhập số hiệu chứng chỉ.',
+            'certificate_number.string'   => 'Số hiệu chứng chỉ không hợp lệ.',
             'certificate_number.max'      => 'Số hiệu chứng chỉ không được vượt quá 100 ký tự.',
 
             'issue_date.required' => 'Vui lòng chọn ngày cấp.',
+            'issue_date.string'   => 'Ngày cấp không hợp lệ.',
             'issue_date.date'     => 'Ngày cấp không hợp lệ.',
 
-            'expiry_date.date'          => 'Ngày hết hạn không hợp lệ.',
+            'expiry_date.string'         => 'Ngày hết hạn không hợp lệ.',
+            'expiry_date.date'           => 'Ngày hết hạn không hợp lệ.',
             'expiry_date.after_or_equal' => 'Ngày hết hạn phải sau hoặc bằng ngày cấp.',
 
-            'issued_by.max' => 'Nơi cấp không được vượt quá 255 ký tự.',
+            'issued_by.string' => 'Nơi cấp không hợp lệ.',
+            'issued_by.max'    => 'Nơi cấp không được vượt quá 255 ký tự.',
 
-            'renewal_deadline.date' => 'Hạn gia hạn không hợp lệ.',
+            'renewal_deadline.string' => 'Hạn gia hạn không hợp lệ.',
+            'renewal_deadline.date'   => 'Hạn gia hạn không hợp lệ.',
 
             'file.file'  => 'Tệp tải lên không hợp lệ.',
             'file.mimes' => 'Chỉ chấp nhận file PDF, JPG hoặc PNG.',
