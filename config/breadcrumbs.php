@@ -112,10 +112,6 @@ return [
         'activity-logs'       => 'Nhật ký hoạt động',
         'alert-rules'         => 'Quy tắc cảnh báo',
 
-        // ── Assessment ────────────────────────────────────────────────────
-        'assessments'         => 'Bộ đánh giá',
-        'config'              => 'Cấu hình',
-
         // ── Workflow ──────────────────────────────────────────────────────
         'workflows'           => 'Luồng tự động',
         'executions'          => 'Lịch sử chạy',

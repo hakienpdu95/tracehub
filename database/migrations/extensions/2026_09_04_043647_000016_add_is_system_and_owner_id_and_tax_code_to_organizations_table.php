@@ -64,11 +64,8 @@ return new class extends Migration {
             if (!Schema::hasIndex('organizations', 'organizations_province_code_ward_code_status_created_at_index')) {
                 $table->index(['province_code', 'ward_code', 'status', 'created_at']);
             }
-            if (!Schema::hasColumn('organizations', 'lead_assessment_code')) {
-                $table->string('lead_assessment_code', 64)->nullable()->after('full_address')->comment('Assessment code dùng để chấm điểm lead sâu. NULL = tắt.');
-            }
             if (!Schema::hasColumn('organizations', 'source')) {
-                $table->string('source', 50)->nullable()->after('lead_assessment_code')->comment('marketplace_signup | admin_created | etc.');
+                $table->string('source', 50)->nullable()->after('full_address')->comment('marketplace_signup | admin_created | etc.');
             }
             if (!Schema::hasColumn('organizations', 'approved_by')) {
                 $table->unsignedBigInteger('approved_by')->nullable()->after('source');
@@ -87,7 +84,7 @@ return new class extends Migration {
         Schema::table('organizations', function (Blueprint $table) {
             if (Schema::hasColumn('organizations', 'province_code')) $table->dropForeign(['province_code']);
             if (Schema::hasColumn('organizations', 'ward_code')) $table->dropForeign(['ward_code']);
-            $cols = array_filter(['is_system', 'owner_id', 'tax_code', 'phone', 'email', 'website', 'industry', 'address', 'city', 'country', 'postal_code', 'description', 'logo_path', 'province_code', 'ward_code', 'full_address', 'lead_assessment_code', 'source', 'approved_by', 'approved_at', 'email_domain'], fn($c) => Schema::hasColumn('organizations', $c));
+            $cols = array_filter(['is_system', 'owner_id', 'tax_code', 'phone', 'email', 'website', 'industry', 'address', 'city', 'country', 'postal_code', 'description', 'logo_path', 'province_code', 'ward_code', 'full_address', 'source', 'approved_by', 'approved_at', 'email_domain'], fn($c) => Schema::hasColumn('organizations', $c));
             if (!empty($cols)) $table->dropColumn(array_values($cols));
         });
     }

@@ -43,12 +43,9 @@ enum PermissionEnum: string
     // Admin=Full only
     case ROLES_MANAGE = 'roles.manage';
 
-    // ══ ASSESSMENT (Chấm điểm khảo sát) ═══════════════════════════
-    // CEO=View | Ops=View | AI_OP=Config+Reprocess | Admin=Full
-    case ASSESSMENT_VIEW      = 'assessment.view';      // CEO, Ops, AI_OP — xem danh sách assessments
-    case ASSESSMENT_CONFIG    = 'assessment.config';    // AI_OP, Admin — wizard cấu hình
-    case ASSESSMENT_RESULTS   = 'assessment.results';   // CEO, Ops, AI_OP — xem kết quả
-    case ASSESSMENT_REPROCESS = 'assessment.reprocess'; // AI_OP, Admin — force recalculate
+    // ══ ASSESSMENT ═════════════════════════════════════════════════
+    // Đã bị gỡ cùng Modules/Assessment (cleanup/remove-non-competency-modules).
+    // assessment.view/config/results/reprocess không còn permission nào tham chiếu.
 
     // ══ SUBSCRIPTION ═══════════════════════════════════════════════
     // Chỉ còn VIEW — MANAGE/BILLING/ADMIN gate các route quản trị thuộc

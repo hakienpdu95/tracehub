@@ -18,7 +18,6 @@
         "ward_code///char///5///_NULL///NULL///->references('ward_code')->constrained('wards')->nullOnDelete()///Phường/xã — FK tới wards.ward_code",
         "full_address///text///__///_NULL///NULL///__///Địa chỉ đầy đủ kết hợp (số nhà + phường/xã + tỉnh)",
         "__index///index///__///__///__///province_code,ward_code,status,created_at///Index cho column",
-        "lead_assessment_code///string///64///_NULL///NULL///__///Assessment code dùng để chấm điểm lead sâu. NULL = tắt.",
         "source///string///50///_NULL///NULL///__///marketplace_signup | admin_created | etc.",
         "approved_by///unsignedBigInteger///__///_NULL///NULL///__///__",
         "approved_at///timestamp///__///_NULL///NULL///__///__",
@@ -57,69 +56,6 @@
         "__index///index///__///__///__///request_id|idx_request///__"
     ],
     [
-        "surveys///add///__///",
-        "assessment_code///string///50///_NULL///NULL///__///Mã định danh cho Scoring Engine — nullable nếu survey không có scoring",
-        "lead_notify_email///string///255///_NULL///NULL///__///Email nhận alert khi hot lead nộp bài — để trống = không gửi",
-        "allow_multiple_responses///boolean///__///NOT_NULL///true///__///__",
-        "organization_id///unsignedBigInteger///__///_NULL///NULL///->constrained()->onDelete('restrict')///__",
-        "specialized_set_code///string///50///_NULL///NULL///__///__",
-        "__index///unique///__///__///__///assessment_code,specialized_set_code|surveys_assessment_specialized_unique///__",
-        "description///text///__///_NULL///NULL///__///__"
-    ],
-    [
-        "maturity_levels///add///__///",
-        "lead_temperature///string///10///NOT_NULL///'cold'///__///hot | warm | cold — dùng để classify lead"
-    ],
-    [
-        "score_rules///add///__///",
-        "feature_code///string///100///_NULL///NULL///__///Định danh đặc trưng Fi — cầu nối với feature_weights. Mặc định = field_key",
-        "question_scoring_type///string///30///_NULL///NULL///__///none | boolean | single_choice | multi_choice | numeric_range. NULL = dùng condition_type",
-        "min_score_cap///integer///__///_NULL///NULL///__///multi_choice: chặn dưới tổng score",
-        "max_score_cap///integer///__///_NULL///NULL///__///multi_choice: chặn trên tổng score",
-        "section_id///unsignedBigInteger///__///_NULL///NULL///->constrained('survey_sections')->onDelete('set null')///FK -> survey_sections, dùng cho sectioned aggregation",
-        "__index///unique///__///__///__///assessment_code,field_key,domain_code,condition_type|uq_score_rule_v2///__"
-    ],
-    [
-        "score_rule_options///add///__///",
-        "option_label///string///255///NOT_NULL///''///__///Nhãn hiển thị của option"
-    ],
-    [
-        "survey_sections///add///__///",
-        "section_code///string///50///_NULL///NULL///__///Code định danh section — dùng cho sectioned aggregation",
-        "assessment_code///string///50///_NULL///NULL///__///Gắn section vào assessment — dùng cho sectioned aggregation",
-        "min_score///integer///__///NOT_NULL///0///__///Raw score thấp nhất lý thuyết (dùng cho normalize)",
-        "max_score///integer///__///NOT_NULL///100///__///Raw score cao nhất lý thuyết (dùng cho normalize)"
-    ],
-    [
-        "roadmap_phases///add///__///",
-        "band_code///string///50///_NULL///NULL///__///Gắn phase theo score_band.band_code — mới theo spec. NULL = dùng maturity_level (cũ)"
-    ],
-    [
-        "survey_responses///add///__///",
-        "__index///index///__///__///__///survey_id,respondent_ref|survey_responses_survey_respondent_idx///__"
-    ],
-    [
-        "survey_answers///add///__///",
-        "row_key///string///100///_NULL///NULL///__///__",
-        "__index///index///__///__///__///response_id,field_id,row_key|sa_response_field_row_idx///__"
-    ],
-    [
-        "scoring_feedback///add///__///",
-        "submitted_by///unsignedBigInteger///__///_NULL///NULL///__///__",
-        "submitted_at///timestamp///__///_NULL///NULL///__///__"
-    ],
-    [
-        "assessment_results///add///__///",
-        "public_token///string///64///_NULL///NULL///->unique()///Token cho phép xem kết quả công khai không cần đăng nhập"
-    ],
-    [
-        "assessments///add///__///",
-        "organization_id///unsignedBigInteger///__///_NULL///NULL///->constrained()->onDelete('restrict')///__",
-        "deleted_at///timestamp///__///_NULL///NULL///__///Thời gian xóa mềm",
-        "source_type///string///30///NOT_NULL///'standalone'///__///global_template|survey_linked|lead_scoring|standalone",
-        "source_ref///string///255///_NULL///NULL///__///slug/code của entity nguồn — VD: survey slug nếu survey_linked"
-    ],
-    [
         "media///add///__///",
         "organization_id///unsignedBigInteger///__///_NULL///NULL///__///__",
         "uploaded_at///timestamp///__///_NULL///NULL///__///Timestamp user thực sự upload — bảo toàn khi migrate từ bảng cũ",
@@ -131,12 +67,6 @@
     [
         "notifications///add///__///",
         "organization_id///unsignedBigInteger///__///_NULL///NULL///->index()///__"
-    ],
-    [
-        "recommendation_rules///add///__///",
-        "kc_category_id///unsignedBigInteger///__///_NULL///NULL///__///__",
-        "kc_item_tag///string///100///_NULL///NULL///__///__",
-        "career_pathway_step_code///string///100///_NULL///NULL///__///__"
     ],
     [
         "organization_members///add///__///",
@@ -156,10 +86,5 @@
         "late_offboard_gap_days///unsignedSmallInteger///__///_NULL///NULL///__///Số ngày gap giữa effective_left_at và offboarded_at — 0 nếu offboard đúng hạn",
         "__index///index///__///__///__///status|om_status_index///__",
         "__index///index///__///__///__///left_at|om_left_at_index///__"
-    ],
-    [
-        "identity_verifications///add///__///",
-        "issuing_province_code///char///2///_NULL///NULL///__///2-char province code từ provinces.province_code — derived từ 3 chữ số đầu CCCD",
-        "email_candidate///string///255///_NULL///NULL///__///Email address captured at send time; compared on confirm to detect mid-flight email changes"
     ]
 ]

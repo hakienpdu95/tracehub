@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\ActivityLog\Database\Seeders\ActivityLogPermissionsSeeder;
-use Modules\Assessment\Database\Seeders\AssessmentDatabaseSeeder;
 use Modules\Auth\Database\Seeders\AuthDatabaseSeeder;
 use Modules\Organization\Database\Seeders\OrganizationRolePermissionSeeder;
 
@@ -22,7 +21,7 @@ use Modules\Organization\Database\Seeders\OrganizationRolePermissionSeeder;
  *     BusinessSolution/BusinessBlueprint/OrganizationSolution/BusinessProject/Survey/
  *     VerticalTemplate/Sandbox/Certifications/CareerPathway/AiImpact/Passport/Campaigns/
  *     Employee/Department/Branch/Position/JobTitle/Person(persons,invitations,imports)/
- *     AiCopilot/RoleScope: đã bị gỡ cùng các module/route đó
+ *     AiCopilot/RoleScope/Assessment: đã bị gỡ cùng các module/route đó
  *     (cleanup/remove-non-competency-modules)
  */
 class SystemDataSeeder extends Seeder
@@ -56,9 +55,6 @@ class SystemDataSeeder extends Seeder
 
             // ── 7. Test users (1 per role) ────────────────────────────────
             UserSeeder::class,
-
-            // ── 8. Assessment: TDWCF, 5-Pillar ────────────────────────────
-            AssessmentDatabaseSeeder::class,
         ]);
 
         $this->command->newLine();

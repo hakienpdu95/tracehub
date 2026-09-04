@@ -69,7 +69,6 @@ const JS_OUTPUT = {
   // Module JS — named [module] to avoid chunk name collision
   'user':                 'assets/modules/user.[hash].js',
   'organization':         'assets/modules/organization.[hash].js',
-  'assessment':           'assets/modules/assessment.[hash].js',
   'activity-log':           'assets/modules/activity-log.[hash].js',
 };
 
@@ -90,7 +89,6 @@ const CSS_OUTPUT = {
   // asset.name là tên sau khi compile: 'user.css', không phải 'user.scss'
   'user.css':                 'assets/modules/user.[hash].css',
   'organization.css':         'assets/modules/organization.[hash].css',
-  'assessment.css':           'assets/modules/assessment.[hash].css',
   'activity-log.css':           'assets/modules/activity-log.[hash].css',
 };
 
@@ -106,9 +104,6 @@ const MODULE_ENTRIES = [
   // Organization
   'Modules/Organization/resources/assets/sass/organization.scss',
   'Modules/Organization/resources/assets/js/organization.js',
-  // Assessment
-  'Modules/Assessment/resources/assets/sass/assessment.scss',
-  'Modules/Assessment/resources/assets/js/assessment.js',
   // ActivityLog
   'Modules/ActivityLog/resources/assets/sass/activity-log.scss',
   'Modules/ActivityLog/resources/assets/js/activity-log.js',
