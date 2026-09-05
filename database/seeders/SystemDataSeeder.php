@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Modules\ActivityLog\Database\Seeders\ActivityLogPermissionsSeeder;
 use Modules\Auth\Database\Seeders\AuthDatabaseSeeder;
 use Modules\Organization\Database\Seeders\OrganizationRolePermissionSeeder;
+use Modules\Product\Database\Seeders\DocumentMasterTypeSeeder;
 
 /**
  * Master Seeder — điểm khởi chạy duy nhất cho toàn bộ dữ liệu mặc định hệ thống.
@@ -55,6 +56,9 @@ class SystemDataSeeder extends Seeder
 
             // ── 7. Test users (1 per role) ────────────────────────────────
             UserSeeder::class,
+
+            // ── 8. Từ điển loại giấy tờ pháp lý (document_master_types) ──
+            DocumentMasterTypeSeeder::class,
         ]);
 
         $this->command->newLine();

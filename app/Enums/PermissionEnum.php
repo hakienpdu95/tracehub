@@ -51,6 +51,22 @@ enum PermissionEnum: string
     case VENDOR_VIEW   = 'vendor.view';
     case VENDOR_MANAGE = 'vendor.manage';
 
+    // ══ PRODUCT (Quản lý Danh mục / SKU Master) ═══════════════════════
+    case PRODUCT_VIEW   = 'product.view';
+    case PRODUCT_MANAGE = 'product.manage';
+
+    // ══ WAREHOUSE (Nhập kho / Lô hàng / Truy xuất nguồn gốc) ═══════════
+    case WAREHOUSE_VIEW   = 'warehouse.view';
+    case WAREHOUSE_MANAGE = 'warehouse.manage';
+
+    // ══ RECALL (Thu hồi sản phẩm / Báo cáo tác dụng bất lợi) ═══════════
+    case RECALL_VIEW   = 'recall.view';
+    case RECALL_MANAGE = 'recall.manage';
+
+    // ══ COMPLIANCE (Hộp thư cảnh báo pháp lý/hạn dùng tập trung) ═══════
+    case COMPLIANCE_VIEW   = 'compliance.view';
+    case COMPLIANCE_MANAGE = 'compliance.manage';
+
     // ══ SUBSCRIPTION ═══════════════════════════════════════════════
     // Chỉ còn VIEW — MANAGE/BILLING/ADMIN gate các route quản trị thuộc
     // Modules/Subscription (đã xóa, xem cleanup/remove-non-competency-modules).

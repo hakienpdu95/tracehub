@@ -6,6 +6,11 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 use Modules\ActivityLog\Core\LogEntryBuilder;
+use Modules\ActivityLog\Observers\AuditableObserver;
+use Modules\Product\Models\ProductCompliance;
+use Modules\Vendor\Models\VendorCertificate;
+use Modules\Warehouse\Models\Batch;
+use Modules\Warehouse\Models\OutboundOrder;
 
 class ActivityLogServiceProvider extends ServiceProvider
 {
@@ -32,6 +37,15 @@ class ActivityLogServiceProvider extends ServiceProvider
         }
 
         $this->registerSchedule();
+        $this->registerAuditObservers();
+    }
+
+    private function registerAuditObservers(): void
+    {
+        Batch::observe(AuditableObserver::class);
+        ProductCompliance::observe(AuditableObserver::class);
+        VendorCertificate::observe(AuditableObserver::class);
+        OutboundOrder::observe(AuditableObserver::class);
     }
 
     private function registerSchedule(): void

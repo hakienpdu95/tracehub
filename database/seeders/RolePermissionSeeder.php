@@ -83,6 +83,14 @@ class RolePermissionSeeder extends Seeder
 
                 P::VENDOR_VIEW->value,
 
+                P::PRODUCT_VIEW->value,
+
+                P::WAREHOUSE_VIEW->value,
+
+                P::RECALL_VIEW->value,
+
+                P::COMPLIANCE_VIEW->value,
+
                 // Export dữ liệu nhạy cảm: Full — CEO phê duyệt export (SoD chặn tự duyệt request của mình)
                 P::EXPORT_REQUEST_VIEW->value,
                 P::EXPORT_REQUEST_APPROVE->value,
@@ -107,6 +115,18 @@ class RolePermissionSeeder extends Seeder
 
                 P::VENDOR_VIEW->value,
                 P::VENDOR_MANAGE->value,
+
+                P::PRODUCT_VIEW->value,
+                P::PRODUCT_MANAGE->value,
+
+                P::WAREHOUSE_VIEW->value,
+                P::WAREHOUSE_MANAGE->value,
+
+                P::RECALL_VIEW->value,
+                P::RECALL_MANAGE->value,
+
+                P::COMPLIANCE_VIEW->value,
+                P::COMPLIANCE_MANAGE->value,
 
                 // Export dữ liệu nhạy cảm: view (minh bạch nội bộ) — KHÔNG approve
                 P::EXPORT_REQUEST_VIEW->value,
@@ -170,6 +190,18 @@ class RolePermissionSeeder extends Seeder
 
                 P::VENDOR_VIEW->value,
                 P::VENDOR_MANAGE->value,
+
+                P::PRODUCT_VIEW->value,
+                P::PRODUCT_MANAGE->value,
+
+                P::WAREHOUSE_VIEW->value,
+                P::WAREHOUSE_MANAGE->value,
+
+                P::RECALL_VIEW->value,
+                P::RECALL_MANAGE->value,
+
+                P::COMPLIANCE_VIEW->value,
+                P::COMPLIANCE_MANAGE->value,
 
                 // Export dữ liệu nhạy cảm: Full — System Admin phê duyệt export (SoD chặn tự duyệt request của mình)
                 P::EXPORT_REQUEST_VIEW->value,

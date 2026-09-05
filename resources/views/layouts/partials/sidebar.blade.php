@@ -62,6 +62,68 @@
             </details>
             @endcan
 
+            @can('product.view')
+            <details {{ request()->routeIs('backend.products.*', 'backend.brands.*', 'backend.document-master-types.*') ? 'open' : '' }}>
+                <summary class="nav-summary {{ request()->routeIs('backend.products.*', 'backend.brands.*', 'backend.document-master-types.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                    <span class="nav-label">Danh mục sản phẩm</span>
+                    <svg class="nav-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m9 18 6-6-6-6"/></svg>
+                </summary>
+                <div class="sub-menu">
+                    <a href="{{ route('backend.products.index') }}" class="sub-link {{ request()->routeIs('backend.products.index') ? 'active' : '' }}">Danh sách sản phẩm</a>
+                    @can('product.manage')
+                    <a href="{{ route('backend.products.create') }}" class="sub-link {{ request()->routeIs('backend.products.create') ? 'active' : '' }}">Thêm sản phẩm</a>
+                    <a href="{{ route('backend.brands.index') }}" class="sub-link {{ request()->routeIs('backend.brands.*') ? 'active' : '' }}">Thương hiệu</a>
+                    <a href="{{ route('backend.document-master-types.index') }}" class="sub-link {{ request()->routeIs('backend.document-master-types.*') ? 'active' : '' }}">Từ điển giấy tờ pháp lý</a>
+                    @endcan
+                </div>
+            </details>
+            @endcan
+
+            @can('warehouse.view')
+            <details {{ request()->routeIs('backend.inbound-receipts.*', 'backend.batches.*', 'backend.outbound-orders.*', 'backend.tag-rolls.*', 'backend.tag-scan-bind.*') ? 'open' : '' }}>
+                <summary class="nav-summary {{ request()->routeIs('backend.inbound-receipts.*', 'backend.batches.*', 'backend.outbound-orders.*', 'backend.tag-rolls.*', 'backend.tag-scan-bind.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 8l-9-5-9 5m18 0l-9 5m9-5v10l-9 5m0-10L3 8m9 5v10M3 8v10l9 5"/></svg>
+                    <span class="nav-label">Kho & Truy xuất nguồn gốc</span>
+                    <svg class="nav-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m9 18 6-6-6-6"/></svg>
+                </summary>
+                <div class="sub-menu">
+                    <a href="{{ route('backend.inbound-receipts.index') }}" class="sub-link {{ request()->routeIs('backend.inbound-receipts.index') ? 'active' : '' }}">Phiếu nhập kho</a>
+                    @can('warehouse.manage')
+                    <a href="{{ route('backend.inbound-receipts.create') }}" class="sub-link {{ request()->routeIs('backend.inbound-receipts.create') ? 'active' : '' }}">Tạo phiếu nhập</a>
+                    @endcan
+                    <a href="{{ route('backend.batches.index') }}" class="sub-link {{ request()->routeIs('backend.batches.*') ? 'active' : '' }}">Lô hàng</a>
+                    <a href="{{ route('backend.outbound-orders.index') }}" class="sub-link {{ request()->routeIs('backend.outbound-orders.*') ? 'active' : '' }}">Đơn xuất buôn (B2B)</a>
+                    @can('warehouse.manage')
+                    <a href="{{ route('backend.tag-rolls.index') }}" class="sub-link {{ request()->routeIs('backend.tag-rolls.*') ? 'active' : '' }}">Kho tem tiền định danh</a>
+                    <a href="{{ route('backend.tag-scan-bind.create') }}" class="sub-link {{ request()->routeIs('backend.tag-scan-bind.*') ? 'active' : '' }}">Gắn kết rời rạc (quét mã)</a>
+                    @endcan
+                </div>
+            </details>
+            @endcan
+
+            @can('recall.view')
+            <details {{ request()->routeIs('backend.product-recalls.*', 'backend.adverse-event-reports.*') ? 'open' : '' }}>
+                <summary class="nav-summary {{ request()->routeIs('backend.product-recalls.*', 'backend.adverse-event-reports.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+                    <span class="nav-label">Thu hồi & Sự cố</span>
+                    <svg class="nav-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m9 18 6-6-6-6"/></svg>
+                </summary>
+                <div class="sub-menu">
+                    <a href="{{ route('backend.product-recalls.index') }}" class="sub-link {{ request()->routeIs('backend.product-recalls.*') ? 'active' : '' }}">Chiến dịch thu hồi</a>
+                    <a href="{{ route('backend.adverse-event-reports.index') }}" class="sub-link {{ request()->routeIs('backend.adverse-event-reports.*') ? 'active' : '' }}">Báo cáo tác dụng bất lợi</a>
+                </div>
+            </details>
+            @endcan
+
+            @can('compliance.view')
+            <a href="{{ route('backend.compliance-warnings.index') }}"
+               class="nav-link {{ request()->routeIs('backend.compliance-warnings.*') ? 'active' : '' }}">
+                <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+                <span class="nav-label">Cảnh báo pháp lý & hạn dùng</span>
+            </a>
+            @endcan
+
             {{-- Project đã bị gỡ (cleanup/remove-non-competency-modules). --}}
 
             {{-- AI Copilot (Usage Dashboard/Request Logs/AI Agents/Prompt Library) và
