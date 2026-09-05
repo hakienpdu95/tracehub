@@ -36,7 +36,6 @@ Route::middleware(['auth'])->prefix('dashboard')->name('backend.')->group(functi
     Route::get('batches', [BatchController::class, 'index'])->name('batches.index');
     Route::get('batches/{batch}', [BatchController::class, 'show'])->name('batches.show');
     Route::post('batches/{batch}/recall', [BatchController::class, 'recall'])->name('batches.recall');
-    Route::post('batches/{batch}/generate-tags', [BatchController::class, 'generateTags'])->name('batches.generate-tags');
     Route::post('batches/{batch}/bind-tags-range', [BatchController::class, 'bindTagsRange'])->name('batches.bind-tags-range');
     Route::post('batches/{batch}/activate-tags', [BatchController::class, 'activateTags'])->name('batches.activate-tags');
 

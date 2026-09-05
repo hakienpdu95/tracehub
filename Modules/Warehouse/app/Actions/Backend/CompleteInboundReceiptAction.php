@@ -12,18 +12,10 @@ class CompleteInboundReceiptAction
 {
     use AsAction;
 
-    public function __construct(
-        private readonly GenerateRetailItemTagsAction $generateTags,
-    ) {}
-
     public function handle(InboundReceipt $inboundReceipt): InboundReceipt
     {
         DB::transaction(function () use ($inboundReceipt) {
             $inboundReceipt->update(['status' => InboundReceiptStatus::Completed->value]);
-
-            foreach ($inboundReceipt->batches as $batch) {
-                $this->generateTags->handle($batch);
-            }
         });
 
         PushInboundReceiptToSapoJob::dispatch($inboundReceipt->id);

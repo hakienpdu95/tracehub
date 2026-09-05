@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Modules\Warehouse\Actions\Backend\ActivateBatchTagsAction;
 use Modules\Warehouse\Actions\Backend\BindRetailItemTagRangeAction;
-use Modules\Warehouse\Actions\Backend\GenerateRetailItemTagsAction;
 use Modules\Warehouse\Actions\Backend\RecallBatchAction;
 use Modules\Warehouse\Enums\BatchStatus;
 use Modules\Warehouse\Models\Batch;
@@ -62,18 +61,6 @@ class BatchController extends Controller
             ->values();
 
         return view('warehouse::batches.show', compact('batch', 'tagCounts', 'tagsTotal', 'remainingToTag', 'availableRolls'));
-    }
-
-    public function generateTags(Batch $batch, GenerateRetailItemTagsAction $action): RedirectResponse
-    {
-        $this->authorize('update', $batch);
-
-        $generated = $action->handle($batch);
-
-        return redirect()->route('backend.batches.show', $batch)
-            ->with('success', $generated > 0
-                ? "Đã sinh {$generated} tem truy vết QR cho lô \"{$batch->internal_batch_code}\"."
-                : 'Lô này đã có tem truy vết từ trước, không sinh lại.');
     }
 
     public function bindTagsRange(Request $request, Batch $batch, BindRetailItemTagRangeAction $action): RedirectResponse

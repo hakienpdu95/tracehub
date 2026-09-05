@@ -16,12 +16,6 @@
         <a href="{{ route('backend.batches.index') }}" class="btn btn-ghost btn-sm">Danh sách</a>
         <a href="{{ route('backend.inbound-receipts.show', $batch->inboundReceipt) }}" class="btn btn-ghost btn-sm">Xem phiếu nhập</a>
         @can('update', $batch)
-        @if($tagsTotal === 0)
-        <form method="POST" action="{{ route('backend.batches.generate-tags', $batch) }}" onsubmit="return confirm('Sinh {{ $batch->initial_qty }} tem truy vết QR cho lô này?');">
-            @csrf
-            <button type="submit" class="btn btn-success btn-sm">Sinh tem truy vết QR</button>
-        </form>
-        @endif
         @if(($tagCounts['bound'] ?? 0) > 0)
         <form method="POST" action="{{ route('backend.batches.activate-tags', $batch) }}" onsubmit="return confirm('Kích hoạt lưu hành {{ $tagCounts['bound'] }} tem đang chờ của lô này? Từ giờ khách hàng quét mã sẽ thấy đầy đủ thông tin sản phẩm.');">
             @csrf
