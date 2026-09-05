@@ -35,7 +35,45 @@
     </div>
 </div>
 
-<div class="alert alert-info py-3 px-4 text-sm">
-    Để gán một dải tem trong cuộn này cho lô hàng, vào trang <strong>chi tiết Lô hàng</strong> cần dán tem và dùng card "Kích hoạt Tem Truy vết cho Lô hàng" — cuộn này sẽ xuất hiện trong danh sách chọn nếu còn tem chưa gắn kết.
+<p class="text-xs text-base-content/50 mb-4">
+    Để gán tem, vào trang chi tiết Lô hàng cần dán tem và dùng card "Kích hoạt Tem Truy vết cho Lô hàng".
+</p>
+
+<div class="card bg-base-100 shadow-sm border border-base-200">
+    <div class="card-body">
+        <h2 class="text-base font-semibold mb-1">Bản đồ phân bổ dải số</h2>
+        <p class="text-xs text-base-content/50 mb-3">Từng phân khúc liên tục theo lô hàng/trạng thái — biết chính xác dải nào đã dùng, dải nào còn trống.</p>
+        <div class="overflow-x-auto">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Dải số</th>
+                        <th>Số lượng</th>
+                        <th>Trạng thái</th>
+                        <th>Lô hàng đã gán</th>
+                        <th>Ngày thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($segments as $segment)
+                    <tr>
+                        <td class="font-mono">{{ $segment['from'] }}{{ $segment['to'] > $segment['from'] ? '–' . $segment['to'] : '' }}</td>
+                        <td>{{ number_format($segment['count']) }}</td>
+                        <td><span class="badge {{ $segment['status']->badgeClass() }} badge-sm">{{ $segment['status']->label() }}</span></td>
+                        <td>
+                            @if($segment['batch'])
+                            <a href="{{ route('backend.batches.show', $segment['batch']) }}" class="link link-primary font-mono">{{ $segment['batch']->internal_batch_code }}</a>
+                            <span class="text-base-content/50">— {{ $segment['batch']->product?->name }}</span>
+                            @else
+                            <span class="text-base-content/40">Chưa sử dụng</span>
+                            @endif
+                        </td>
+                        <td class="text-xs text-base-content/50">{{ $segment['updated_at']?->format('d/m/Y H:i') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 @endsection

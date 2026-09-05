@@ -11,11 +11,16 @@ class UnbindRetailItemTagAction
 {
     use AsAction;
 
+    private const UNBINDABLE_STATUSES = [
+        RetailItemTagStatus::Bound,
+        RetailItemTagStatus::InStock,
+    ];
+
     public function handle(RetailItemTag $tag): void
     {
-        if ($tag->status !== RetailItemTagStatus::InStock) {
+        if (! in_array($tag->status, self::UNBINDABLE_STATUSES, true)) {
             throw ValidationException::withMessages([
-                'tag' => "Không thể gỡ gắn kết tem đang ở trạng thái \"{$tag->status->label()}\". Chỉ gỡ được tem còn trên kệ.",
+                'tag' => "Không thể gỡ gắn kết tem đang ở trạng thái \"{$tag->status->label()}\". Chỉ gỡ được tem đang \"Chờ lưu hành\" hoặc \"Còn trên kệ\".",
             ]);
         }
 

@@ -182,6 +182,76 @@
 </div>
 @endcan
 
+@php($canUpdateBatch = auth()->user()->can('update', $batch))
+<div class="card bg-base-100 shadow-sm border border-base-200 mb-6">
+    <div class="card-body">
+        <h2 class="text-base font-semibold mb-3">Các dải tem đã gán cho lô này</h2>
+        <div class="overflow-x-auto">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Cuộn tem (Prefix)</th>
+                        <th>Dải số đã gán</th>
+                        <th>Số lượng</th>
+                        <th>Trạng thái</th>
+                        @can('update', $batch)
+                        <th></th>
+                        @endcan
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($allocations as $allocation)
+                    <tr>
+                        <td class="font-mono">{{ $allocation['prefix'] ?? '— (tem cũ)' }}</td>
+                        <td class="font-mono">
+                            @if($allocation['from'] !== null)
+                                {{ $allocation['from'] }}{{ $allocation['to'] > $allocation['from'] ? '–' . $allocation['to'] : '' }}
+                            @else
+                                <span class="text-base-content/40">Không seri hóa</span>
+                            @endif
+                        </td>
+                        <td>{{ number_format($allocation['count']) }}</td>
+                        <td>
+                            @php($status = $allocation['status'])
+                            @if(in_array($status->value, ['damaged', 'recalled']))
+                                <span class="badge {{ $status->badgeClass() }} badge-sm">{{ $status->label() }}</span>
+                            @elseif($status->isMarketReleased())
+                                <span class="badge badge-success badge-sm">Đã lưu hành</span>
+                            @else
+                                <span class="badge badge-warning badge-sm">Chờ lưu hành</span>
+                            @endif
+                        </td>
+                        @can('update', $batch)
+                        <td class="text-right">
+                            @if($allocation['from'] !== null && in_array($status->value, ['bound', 'in_stock']))
+                            <form method="POST" action="{{ route('backend.batches.unbind-tag-range', $batch) }}" class="inline"
+                                  onsubmit="return confirm('Gỡ dải tem {{ $allocation['from'] }}–{{ $allocation['to'] }} khỏi lô này? Tem sẽ quay về kho tiền định danh.');">
+                                @csrf
+                                <input type="hidden" name="from_sequence" value="{{ $allocation['from'] }}">
+                                <input type="hidden" name="to_sequence" value="{{ $allocation['to'] }}">
+                                <button type="submit" class="btn btn-ghost btn-xs text-error">Gỡ dải tem</button>
+                            </form>
+                            @endif
+                        </td>
+                        @endcan
+                    </tr>
+                    @empty
+                    <tr><td colspan="{{ $canUpdateBatch ? 5 : 4 }}" class="text-center text-sm text-base-content/50 py-4">Lô này chưa có dải tem nào được gán.</td></tr>
+                    @endforelse
+
+                    @if($remainingToTag > 0)
+                    <tr class="bg-warning/20">
+                        <td colspan="2" class="font-medium">Chưa xác định — hãy dùng form phía trên để gán tiếp</td>
+                        <td class="font-medium">{{ number_format($remainingToTag) }}</td>
+                        <td colspan="{{ $canUpdateBatch ? 2 : 1 }}" class="font-medium">Đang chờ gán tem: {{ number_format($remainingToTag) }} đơn vị hàng</td>
+                    </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6 items-start">
 
     <div class="card bg-base-100 shadow-sm border border-base-200">

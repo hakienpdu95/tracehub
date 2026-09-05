@@ -18,7 +18,7 @@
         <table class="table table-sm">
             <thead>
                 <tr>
-                    <th>Serial</th>
+                    <th>Số Serial</th>
                     <th>Mã QR</th>
                     <th>Trạng thái</th>
                     <th>Ngày bán</th>
@@ -28,13 +28,13 @@
             <tbody>
                 @forelse($tags as $tag)
                 <tr>
-                    <td>{{ $tag->serial_number }}</td>
+                    <td class="font-mono">{{ $tag->gs1_serial ?? $tag->serial_number }}</td>
                     <td class="font-mono">{{ $tag->qr_code }}</td>
                     <td><span class="badge {{ $tag->status->badgeClass() }} badge-xs">{{ $tag->status->label() }}</span></td>
                     <td>{{ $tag->sold_at?->format('d/m/Y H:i') ?? '—' }}</td>
                     <td class="text-right space-x-1">
                         @can('update', $batch)
-                        @if($tag->status->value === 'in_stock')
+                        @if(in_array($tag->status->value, ['bound', 'in_stock']))
                         <form method="POST" action="{{ route('backend.tags.unbind', $tag) }}" class="inline" onsubmit="return confirm('Gỡ gắn kết tem này? Tem sẽ quay về kho tiền định danh, có thể gán cho lô khác.');">
                             @csrf
                             <button type="submit" class="btn btn-ghost btn-xs">Gỡ gắn kết</button>

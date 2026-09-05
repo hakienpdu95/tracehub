@@ -9,11 +9,14 @@ use Illuminate\Validation\ValidationException;
 use Modules\Warehouse\Actions\Backend\ActivateBatchTagsAction;
 use Modules\Warehouse\Actions\Backend\BindRetailItemTagRangeAction;
 use Modules\Warehouse\Actions\Backend\RecallBatchAction;
+use Modules\Warehouse\Actions\Backend\UnbindRetailItemTagRangeAction;
 use Modules\Warehouse\Enums\BatchStatus;
 use Modules\Warehouse\Models\Batch;
 use Modules\Warehouse\Models\TagRoll;
 use Modules\Warehouse\Queries\GetBatchHandler;
 use Modules\Warehouse\Queries\GetBatchQuery;
+use Modules\Warehouse\Queries\GetBatchTagAllocationsHandler;
+use Modules\Warehouse\Queries\GetBatchTagAllocationsQuery;
 use Modules\Warehouse\Queries\ListBatchesHandler;
 use Modules\Warehouse\Queries\ListBatchesQuery;
 
@@ -42,7 +45,7 @@ class BatchController extends Controller
         return view('warehouse::batches.index', compact('batches', 'statuses'));
     }
 
-    public function show(Batch $batch, GetBatchHandler $handler)
+    public function show(Batch $batch, GetBatchHandler $handler, GetBatchTagAllocationsHandler $allocationsHandler)
     {
         $batch = $handler->handle(new GetBatchQuery($batch));
 
@@ -60,7 +63,9 @@ class BatchController extends Controller
             ->filter(fn (TagRoll $roll) => $roll->live_counts['provisioned'] > 0)
             ->values();
 
-        return view('warehouse::batches.show', compact('batch', 'tagCounts', 'tagsTotal', 'remainingToTag', 'availableRolls'));
+        $allocations = $allocationsHandler->handle(new GetBatchTagAllocationsQuery($batch));
+
+        return view('warehouse::batches.show', compact('batch', 'tagCounts', 'tagsTotal', 'remainingToTag', 'availableRolls', 'allocations'));
     }
 
     public function bindTagsRange(Request $request, Batch $batch, BindRetailItemTagRangeAction $action): RedirectResponse
@@ -118,6 +123,26 @@ class BatchController extends Controller
             ->with('success', $activated > 0
                 ? "Đã kích hoạt lưu hành {$activated} tem cho lô \"{$batch->internal_batch_code}\". Quét mã sẽ hiển thị thông tin sản phẩm ngay."
                 : 'Lô này không có tem nào đang chờ lưu hành.');
+    }
+
+    public function unbindTagRange(Request $request, Batch $batch, UnbindRetailItemTagRangeAction $action): RedirectResponse
+    {
+        $this->authorize('update', $batch);
+
+        $validated = $request->validate([
+            'from_sequence' => ['required', 'integer', 'min:1'],
+            'to_sequence'   => ['required', 'integer', 'min:1', 'gte:from_sequence'],
+        ]);
+
+        try {
+            $unbound = $action->handle($batch, (int) $validated['from_sequence'], (int) $validated['to_sequence']);
+        } catch (ValidationException $e) {
+            return redirect()->route('backend.batches.show', $batch)
+                ->with('error', collect($e->errors())->flatten()->first());
+        }
+
+        return redirect()->route('backend.batches.show', $batch)
+            ->with('success', "Đã gỡ {$unbound} tem (dải {$validated['from_sequence']}–{$validated['to_sequence']}) khỏi lô \"{$batch->internal_batch_code}\". Tem đã quay về kho tiền định danh, có thể gán lại cho lô khác.");
     }
 
     public function recall(Batch $batch, RecallBatchAction $action): RedirectResponse

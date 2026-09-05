@@ -8,6 +8,7 @@ use Modules\Warehouse\Http\Controllers\InboundReceiptController;
 use Modules\Warehouse\Http\Controllers\InboundReceiptDocumentController;
 use Modules\Warehouse\Http\Controllers\OutboundOrderController;
 use Modules\Warehouse\Http\Controllers\RetailItemTagController;
+use Modules\Warehouse\Http\Controllers\SerialLookupController;
 use Modules\Warehouse\Http\Controllers\TagProvisioningController;
 use Modules\Warehouse\Http\Controllers\TagScanBindController;
 use Modules\Warehouse\Http\Controllers\TraceabilityPortalController;
@@ -38,6 +39,7 @@ Route::middleware(['auth'])->prefix('dashboard')->name('backend.')->group(functi
     Route::post('batches/{batch}/recall', [BatchController::class, 'recall'])->name('batches.recall');
     Route::post('batches/{batch}/bind-tags-range', [BatchController::class, 'bindTagsRange'])->name('batches.bind-tags-range');
     Route::post('batches/{batch}/activate-tags', [BatchController::class, 'activateTags'])->name('batches.activate-tags');
+    Route::post('batches/{batch}/unbind-tag-range', [BatchController::class, 'unbindTagRange'])->name('batches.unbind-tag-range');
 
     Route::post('batches/{batch}/documents', [BatchDocumentController::class, 'store'])
         ->name('batches.documents.store');
@@ -49,6 +51,8 @@ Route::middleware(['auth'])->prefix('dashboard')->name('backend.')->group(functi
 
     Route::post('tags/{tag}/unbind', [RetailItemTagController::class, 'unbind'])->name('tags.unbind');
     Route::post('tags/{tag}/void', [RetailItemTagController::class, 'void'])->name('tags.void');
+
+    Route::get('serial-lookup', [SerialLookupController::class, 'index'])->name('serial-lookup.index');
 
     Route::get('tag-scan-bind', [TagScanBindController::class, 'create'])->name('tag-scan-bind.create');
     Route::post('tag-scan-bind/scan', [TagScanBindController::class, 'scan'])->name('tag-scan-bind.scan');

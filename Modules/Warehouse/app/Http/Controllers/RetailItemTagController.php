@@ -27,8 +27,9 @@ class RetailItemTagController extends Controller
         $this->authorize('view', $batch);
 
         $tags = $batch->tags()->orderBy('serial_number')->get()->map(fn ($tag) => [
-            'qr_code' => $tag->qr_code,
-            'svg'     => $qrCodeGenerator->toSvg($tag->qr_code, 160),
+            'qr_code'    => $tag->qr_code,
+            'gs1_serial' => $tag->gs1_serial ?? $tag->serial_number,
+            'svg'        => $qrCodeGenerator->toSvg($tag->qr_code, 160),
         ]);
 
         return Pdf::view('warehouse::batches.tags_print', compact('batch', 'tags'))

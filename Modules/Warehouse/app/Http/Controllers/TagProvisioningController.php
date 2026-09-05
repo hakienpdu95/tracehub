@@ -11,6 +11,8 @@ use Modules\Warehouse\Actions\Backend\ProvisionRetailItemTagsAction;
 use Modules\Warehouse\Enums\RetailItemTagStatus;
 use Modules\Warehouse\Models\RetailItemTag;
 use Modules\Warehouse\Models\TagRoll;
+use Modules\Warehouse\Queries\GetTagRollAllocationMapHandler;
+use Modules\Warehouse\Queries\GetTagRollAllocationMapQuery;
 use Modules\Warehouse\Support\QrCodeGenerator;
 
 class TagProvisioningController extends Controller
@@ -36,13 +38,14 @@ class TagProvisioningController extends Controller
         return view('warehouse::tag_rolls.index', compact('stats', 'rolls', 'prefixes'));
     }
 
-    public function show(TagRoll $roll): \Illuminate\View\View
+    public function show(TagRoll $roll, GetTagRollAllocationMapHandler $handler): \Illuminate\View\View
     {
         abort_unless(auth()->user()->can('warehouse.manage'), 403);
 
-        $counts = $roll->liveCounts();
+        $counts   = $roll->liveCounts();
+        $segments = $handler->handle(new GetTagRollAllocationMapQuery($roll));
 
-        return view('warehouse::tag_rolls.show', compact('roll', 'counts'));
+        return view('warehouse::tag_rolls.show', compact('roll', 'counts', 'segments'));
     }
 
     public function provision(Request $request, ProvisionRetailItemTagsAction $action): RedirectResponse

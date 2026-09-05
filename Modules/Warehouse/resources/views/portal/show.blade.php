@@ -20,6 +20,9 @@
             </div>
             <h1 class="text-lg font-bold">{{ $tag->product->name }}</h1>
             <p class="text-sm text-base-content/60">{{ $tag->product->brand?->name }} · Mã SKU: {{ $tag->product->sku }}</p>
+            @if($tag->gs1_serial)
+            <p class="text-xs text-base-content/50 mt-1">Mã Serial (đọc cho tổng đài khi cần hỗ trợ): <span class="font-mono font-semibold text-base-content">{{ $tag->gs1_serial }}</span></p>
+            @endif
         </div>
     </div>
 

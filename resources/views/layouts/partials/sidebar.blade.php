@@ -81,8 +81,8 @@
             @endcan
 
             @can('warehouse.view')
-            <details {{ request()->routeIs('backend.inbound-receipts.*', 'backend.batches.*', 'backend.outbound-orders.*', 'backend.tag-rolls.*', 'backend.tag-scan-bind.*') ? 'open' : '' }}>
-                <summary class="nav-summary {{ request()->routeIs('backend.inbound-receipts.*', 'backend.batches.*', 'backend.outbound-orders.*', 'backend.tag-rolls.*', 'backend.tag-scan-bind.*') ? 'active' : '' }}">
+            <details {{ request()->routeIs('backend.inbound-receipts.*', 'backend.batches.*', 'backend.outbound-orders.*', 'backend.tag-rolls.*', 'backend.tag-scan-bind.*', 'backend.serial-lookup.*') ? 'open' : '' }}>
+                <summary class="nav-summary {{ request()->routeIs('backend.inbound-receipts.*', 'backend.batches.*', 'backend.outbound-orders.*', 'backend.tag-rolls.*', 'backend.tag-scan-bind.*', 'backend.serial-lookup.*') ? 'active' : '' }}">
                     <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 8l-9-5-9 5m18 0l-9 5m9-5v10l-9 5m0-10L3 8m9 5v10M3 8v10l9 5"/></svg>
                     <span class="nav-label">Kho & Truy xuất nguồn gốc</span>
                     <svg class="nav-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m9 18 6-6-6-6"/></svg>
@@ -94,6 +94,7 @@
                     @endcan
                     <a href="{{ route('backend.batches.index') }}" class="sub-link {{ request()->routeIs('backend.batches.*') ? 'active' : '' }}">Lô hàng</a>
                     <a href="{{ route('backend.outbound-orders.index') }}" class="sub-link {{ request()->routeIs('backend.outbound-orders.*') ? 'active' : '' }}">Đơn xuất buôn (B2B)</a>
+                    <a href="{{ route('backend.serial-lookup.index') }}" class="sub-link {{ request()->routeIs('backend.serial-lookup.*') ? 'active' : '' }}">Tra cứu vòng đời Serial</a>
                     @can('warehouse.manage')
                     <a href="{{ route('backend.tag-rolls.index') }}" class="sub-link {{ request()->routeIs('backend.tag-rolls.*') ? 'active' : '' }}">Kho tem tiền định danh</a>
                     <a href="{{ route('backend.tag-scan-bind.create') }}" class="sub-link {{ request()->routeIs('backend.tag-scan-bind.*') ? 'active' : '' }}">Gắn kết rời rạc (quét mã)</a>

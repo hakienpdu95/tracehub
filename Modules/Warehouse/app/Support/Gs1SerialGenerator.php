@@ -39,17 +39,21 @@ class Gs1SerialGenerator
         return array_merge($clean, $this->generateUids(count($existing)));
     }
 
+    /** Số chữ số đệm cho phần số của gs1_serial — VD: TH + 00001 = "TH00001". */
+    private const SERIAL_DIGITS = 5;
+
     /**
      * gs1_serial xác định (deterministic) từ prefix + visual_sequence đệm số 0 —
-     * cho phép nhân viên kho lọc/gán theo dải bằng cách gõ đúng prefix + khoảng số nhìn thấy trên tem in.
-     * Không cần chống trùng vì visual_sequence đã là duy nhất toàn hệ thống.
+     * ngắn gọn, đọc được qua điện thoại cho CSKH (VD: "TH00001"), đồng thời cho phép
+     * nhân viên kho lọc/gán theo dải bằng cách gõ đúng prefix + khoảng số nhìn thấy trên tem in.
+     * Không cần chống trùng vì visual_sequence đã là duy nhất toàn hệ thống — nếu số vượt quá
+     * 5 chữ số, chuỗi số sẽ tự dài ra (không bị cắt, không mất tính duy nhất).
      */
     public function buildGs1Serial(string $prefix, int $visualSequence): string
     {
         $prefix = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $prefix));
-        $digits = max(6, 20 - strlen($prefix));
 
-        return substr($prefix . str_pad((string) $visualSequence, $digits, '0', STR_PAD_LEFT), 0, 20);
+        return substr($prefix . str_pad((string) $visualSequence, self::SERIAL_DIGITS, '0', STR_PAD_LEFT), 0, 20);
     }
 
     private function randomToken(int $length): string

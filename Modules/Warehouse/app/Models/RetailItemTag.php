@@ -46,4 +46,9 @@ class RetailItemTag extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function externalOrder(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Sapo\Models\ExternalOrder::class);
+    }
 }
