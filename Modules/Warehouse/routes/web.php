@@ -8,6 +8,7 @@ use Modules\Warehouse\Http\Controllers\InboundReceiptController;
 use Modules\Warehouse\Http\Controllers\InboundReceiptDocumentController;
 use Modules\Warehouse\Http\Controllers\OutboundOrderController;
 use Modules\Warehouse\Http\Controllers\RetailItemTagController;
+use Modules\Warehouse\Http\Controllers\SapoSyncLogController;
 use Modules\Warehouse\Http\Controllers\SerialLookupController;
 use Modules\Warehouse\Http\Controllers\TagProvisioningController;
 use Modules\Warehouse\Http\Controllers\TagScanBindController;
@@ -57,6 +58,8 @@ Route::middleware(['auth'])->prefix('dashboard')->name('backend.')->group(functi
     Route::post('tags/{tag}/void', [RetailItemTagController::class, 'void'])->name('tags.void');
 
     Route::get('serial-lookup', [SerialLookupController::class, 'index'])->name('serial-lookup.index');
+
+    Route::get('sapo-sync-log', [SapoSyncLogController::class, 'index'])->name('sapo-sync-log.index');
 
     Route::get('tag-scan-bind', [TagScanBindController::class, 'create'])->name('tag-scan-bind.create');
     Route::post('tag-scan-bind/scan', [TagScanBindController::class, 'scan'])->name('tag-scan-bind.scan');
