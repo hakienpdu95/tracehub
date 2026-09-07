@@ -5,6 +5,7 @@ use Modules\Warehouse\Http\Controllers\Api\BatchApiController;
 use Modules\Warehouse\Http\Controllers\Api\RetailItemTagApiController;
 use Modules\Warehouse\Http\Controllers\Api\InboundReceiptApiController;
 use Modules\Warehouse\Http\Controllers\Api\OutboundOrderApiController;
+use Modules\Warehouse\Http\Controllers\Api\SapoProductSyncLogApiController;
 use Modules\Warehouse\Http\Controllers\Api\SapoSyncLogApiController;
 use Modules\Warehouse\Http\Controllers\Api\TagRollApiController;
 use Modules\Warehouse\Http\Controllers\BatchController;
@@ -93,5 +94,6 @@ Route::middleware(['auth'])->prefix('backend/api')->name('backend.api.')->group(
     Route::get('inbound-receipts', [InboundReceiptApiController::class, 'index'])->name('inbound-receipts');
     Route::get('outbound-orders', [OutboundOrderApiController::class, 'index'])->name('outbound-orders');
     Route::get('sapo-sync-log', [SapoSyncLogApiController::class, 'index'])->name('sapo-sync-log');
+    Route::get('sapo-product-sync-log', [SapoProductSyncLogApiController::class, 'index'])->name('sapo-product-sync-log');
     Route::get('tag-rolls', [TagRollApiController::class, 'index'])->name('tag-rolls');
 });

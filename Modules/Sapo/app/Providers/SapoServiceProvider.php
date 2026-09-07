@@ -4,6 +4,7 @@ namespace Modules\Sapo\Providers;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Modules\Sapo\Console\Commands\ReconcileSapoOrdersCommand;
+use Modules\Sapo\Console\Commands\SyncSapoProductsCommand;
 use Nwidart\Modules\Support\ModuleServiceProvider;
 
 class SapoServiceProvider extends ModuleServiceProvider
@@ -18,6 +19,7 @@ class SapoServiceProvider extends ModuleServiceProvider
 
     protected array $commands = [
         ReconcileSapoOrdersCommand::class,
+        SyncSapoProductsCommand::class,
     ];
 
     public function register(): void
@@ -36,5 +38,13 @@ class SapoServiceProvider extends ModuleServiceProvider
             ->name('sapo:reconcile-orders')
             ->dailyAt('23:00')
             ->onOneServer();
+
+        // Lưới an toàn — quét toàn bộ danh mục để bù các webhook products/* bị thất lạc
+        // trong ngày (Sapo down, timeout, mất kết nối...).
+        $schedule->command('sapo:sync-products')
+            ->name('sapo:sync-products')
+            ->dailyAt('02:00')
+            ->onOneServer()
+            ->withoutOverlapping();
     }
 }

@@ -17,6 +17,15 @@ class SapoClient
         return $this->request()->get($this->url($path), $query);
     }
 
+    public function getProducts(int $page = 1, int $limit = 50): Response
+    {
+        return $this->get('/admin/products.json', [
+            'page'   => $page,
+            'limit'  => $limit,
+            'fields' => 'id,name,vendor,image,variants',
+        ]);
+    }
+
     private function request()
     {
         return Http::withHeaders([

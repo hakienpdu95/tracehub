@@ -20,6 +20,9 @@ class Product extends TenantAwareModel
         'category_type',
         'unit',
         'external_product_id',
+        'sapo_product_id',
+        'sapo_variant_id',
+        'image_url',
         'status',
     ];
 

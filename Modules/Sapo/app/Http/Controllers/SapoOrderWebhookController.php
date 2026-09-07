@@ -15,12 +15,8 @@ class SapoOrderWebhookController extends Controller
 {
     public function handle(Request $request, string $org_id, ProcessSapoOrderWebhookAction $action): JsonResponse
     {
-        $secret = (string) config('sapo.webhook_secret');
-
-        if ($secret === '' || ! hash_equals($secret, (string) $request->query('token'))) {
-            abort(401, 'Invalid webhook token.');
-        }
-
+        // Xác thực đã chạy ở middleware VerifySapoWebhookHmac (route sapo.hmac) — không
+        // còn dùng token trong query string như trước.
         $org = Organization::findOrFail($org_id);
         TenantContext::set($org);
 

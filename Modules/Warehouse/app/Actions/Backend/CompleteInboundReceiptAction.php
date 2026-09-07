@@ -4,7 +4,6 @@ namespace Modules\Warehouse\Actions\Backend;
 
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
-use Modules\Sapo\Jobs\PushInboundReceiptToSapoJob;
 use Modules\Warehouse\Enums\InboundReceiptStatus;
 use Modules\Warehouse\Models\InboundReceipt;
 
@@ -17,8 +16,6 @@ class CompleteInboundReceiptAction
         DB::transaction(function () use ($inboundReceipt) {
             $inboundReceipt->update(['status' => InboundReceiptStatus::Completed->value]);
         });
-
-        PushInboundReceiptToSapoJob::dispatch($inboundReceipt->id);
 
         return $inboundReceipt->fresh();
     }
