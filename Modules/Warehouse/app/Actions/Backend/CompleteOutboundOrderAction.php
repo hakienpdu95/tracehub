@@ -37,20 +37,30 @@ class CompleteOutboundOrderAction
 
                 // Tem chưa lưu hành (bound) khi xuất kho vẫn tiếp tục bị khóa (transferred) —
                 // đại lý phải chờ "Kích hoạt lưu hành đơn hàng" mới quét ra được thông tin.
+                // outbound_order_id được ghi lại ngay tại đây — đây là điểm neo duy nhất cho
+                // phép truy vết ngược "đại lý nào đang giữ serial nào" (chống bán phá giá).
                 $boundIds = RetailItemTag::where('batch_id', $batch->id)
                     ->where('status', RetailItemTagStatus::Bound->value)
+                    ->orderByRaw('visual_sequence IS NULL, visual_sequence ASC')
                     ->limit($line->quantity)
                     ->pluck('id');
-                RetailItemTag::whereIn('id', $boundIds)->update(['status' => RetailItemTagStatus::Transferred->value]);
+                RetailItemTag::whereIn('id', $boundIds)->update([
+                    'status'             => RetailItemTagStatus::Transferred->value,
+                    'outbound_order_id'  => $order->id,
+                ]);
 
                 // Tem đã lưu hành từ trước (in_stock) thì giữ nguyên quyền quét, chỉ đổi vị trí kho.
                 $remaining = $line->quantity - $boundIds->count();
                 if ($remaining > 0) {
                     $activeIds = RetailItemTag::where('batch_id', $batch->id)
                         ->where('status', RetailItemTagStatus::InStock->value)
+                        ->orderByRaw('visual_sequence IS NULL, visual_sequence ASC')
                         ->limit($remaining)
                         ->pluck('id');
-                    RetailItemTag::whereIn('id', $activeIds)->update(['status' => RetailItemTagStatus::TransferredActive->value]);
+                    RetailItemTag::whereIn('id', $activeIds)->update([
+                        'status'            => RetailItemTagStatus::TransferredActive->value,
+                        'outbound_order_id' => $order->id,
+                    ]);
                 }
             }
 

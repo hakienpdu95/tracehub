@@ -3,8 +3,9 @@
 
 @section('content')
 <div x-data="inboundReceiptListPage({{ Js::from([
-    'apiUrl'   => route('backend.api.inbound-receipts'),
-    'statuses' => $statuses,
+    'apiUrl'    => route('backend.api.inbound-receipts'),
+    'statuses'  => $statuses,
+    'canUpdate' => auth()->user()->can('update', new \Modules\Warehouse\Models\InboundReceipt),
 ]) }})">
 
     <div class="flex flex-wrap items-center justify-between gap-3 mb-5">

@@ -23,6 +23,7 @@ class OutboundOrderListResource extends JsonResource
             'status_badge' => $status->badgeClass(),
 
             'show_url' => route('backend.outbound-orders.show', $this->resource),
+            'edit_url' => route('backend.outbound-orders.edit', $this->resource),
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Warehouse\Http\Controllers\Api\BatchApiController;
+use Modules\Warehouse\Http\Controllers\Api\RetailItemTagApiController;
 use Modules\Warehouse\Http\Controllers\Api\InboundReceiptApiController;
 use Modules\Warehouse\Http\Controllers\Api\OutboundOrderApiController;
 use Modules\Warehouse\Http\Controllers\Api\SapoSyncLogApiController;
@@ -77,16 +78,18 @@ Route::middleware(['auth'])->prefix('dashboard')->name('backend.')->group(functi
 
     Route::resource('outbound-orders', OutboundOrderController::class)
         ->parameters(['outbound-orders' => 'order'])
-        ->only(['index', 'create', 'store', 'show']);
+        ->only(['index', 'create', 'store', 'show', 'edit', 'update']);
     Route::post('outbound-orders/{order}/batches', [OutboundOrderController::class, 'addBatch'])->name('outbound-orders.batches.store');
     Route::delete('outbound-orders/{order}/batches/{pickedBatch}', [OutboundOrderController::class, 'removeBatch'])->name('outbound-orders.batches.destroy');
     Route::post('outbound-orders/{order}/complete', [OutboundOrderController::class, 'complete'])->name('outbound-orders.complete');
     Route::post('outbound-orders/{order}/activate-tags', [OutboundOrderController::class, 'activateTags'])->name('outbound-orders.activate-tags');
     Route::post('outbound-orders/{order}/cancel', [OutboundOrderController::class, 'cancel'])->name('outbound-orders.cancel');
+    Route::get('outbound-orders/{order}/packing-slip', [OutboundOrderController::class, 'packingSlip'])->name('outbound-orders.packing-slip');
 });
 
 Route::middleware(['auth'])->prefix('backend/api')->name('backend.api.')->group(function () {
     Route::get('batches', [BatchApiController::class, 'index'])->name('batches');
+    Route::get('batches/{batch}/tags', [RetailItemTagApiController::class, 'index'])->name('batches.tags');
     Route::get('inbound-receipts', [InboundReceiptApiController::class, 'index'])->name('inbound-receipts');
     Route::get('outbound-orders', [OutboundOrderApiController::class, 'index'])->name('outbound-orders');
     Route::get('sapo-sync-log', [SapoSyncLogApiController::class, 'index'])->name('sapo-sync-log');

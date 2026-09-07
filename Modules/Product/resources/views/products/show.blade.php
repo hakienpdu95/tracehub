@@ -107,7 +107,7 @@
         </div>
 
         @can('create', \Modules\Product\Models\ProductCompliance::class)
-        <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div id="add-compliance" class="card bg-base-100 shadow-sm border border-base-200 scroll-mt-24">
             <div class="card-body">
                 <h2 class="text-base font-semibold mb-3">Thêm hồ sơ pháp lý mới</h2>
 

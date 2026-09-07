@@ -17,9 +17,9 @@ class RetailItemTagController extends Controller
     {
         $this->authorize('view', $batch);
 
-        $tags = $batch->tags()->orderBy('serial_number')->paginate(50);
+        $tagsTotal = $batch->tags()->count();
 
-        return view('warehouse::batches.tags_index', compact('batch', 'tags'));
+        return view('warehouse::batches.tags_index', compact('batch', 'tagsTotal'));
     }
 
     public function print(Batch $batch, QrCodeGenerator $qrCodeGenerator)

@@ -12,8 +12,10 @@ use Modules\Warehouse\Actions\Backend\CancelOutboundOrderAction;
 use Modules\Warehouse\Actions\Backend\CompleteOutboundOrderAction;
 use Modules\Warehouse\Actions\Backend\RemovePickedBatchAction;
 use Modules\Warehouse\Actions\Backend\StoreOutboundOrderAction;
+use Modules\Warehouse\Actions\Backend\UpdateOutboundOrderAction;
 use Modules\Warehouse\Data\Requests\AddPickedBatchData;
 use Modules\Warehouse\Data\Requests\StoreOutboundOrderData;
+use Modules\Warehouse\Data\Requests\UpdateOutboundOrderData;
 use Modules\Warehouse\Enums\OutboundOrderStatus;
 use Modules\Warehouse\Models\OutboundOrder;
 use Modules\Warehouse\Models\OutboundPickedBatch;
@@ -21,6 +23,9 @@ use Modules\Warehouse\Queries\GetFefoSuggestionHandler;
 use Modules\Warehouse\Queries\GetFefoSuggestionQuery;
 use Modules\Warehouse\Queries\GetOutboundOrderHandler;
 use Modules\Warehouse\Queries\GetOutboundOrderQuery;
+use Modules\Warehouse\Queries\GetOutboundOrderTagAllocationsHandler;
+use Modules\Warehouse\Queries\GetOutboundOrderTagAllocationsQuery;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class OutboundOrderController extends Controller
 {
@@ -50,10 +55,32 @@ class OutboundOrderController extends Controller
             ->with('success', 'Đã tạo đơn xuất buôn "' . $order->order_number . '".');
     }
 
-    public function show(Request $request, OutboundOrder $order, GetOutboundOrderHandler $handler, GetFefoSuggestionHandler $fefoHandler)
+    public function edit(OutboundOrder $order)
     {
-        $order    = $handler->handle(new GetOutboundOrderQuery($order));
-        $products = Product::orderBy('name')->get();
+        return view('warehouse::outbound_orders.edit', compact('order'));
+    }
+
+    public function update(Request $request, OutboundOrder $order, UpdateOutboundOrderAction $action): RedirectResponse
+    {
+        $data = UpdateOutboundOrderData::validateAndCreate($request->all());
+        $action->handle($order, $data);
+
+        return redirect()->route('backend.outbound-orders.show', $order)
+            ->with('success', 'Cập nhật đơn xuất buôn thành công.');
+    }
+
+    public function show(
+        Request $request,
+        OutboundOrder $order,
+        GetOutboundOrderHandler $handler,
+        GetFefoSuggestionHandler $fefoHandler,
+        GetOutboundOrderTagAllocationsHandler $allocationsHandler,
+    ) {
+        $order       = $handler->handle(new GetOutboundOrderQuery($order));
+        $products    = Product::orderBy('name')->get();
+        $allocations = $allocationsHandler->handle(new GetOutboundOrderTagAllocationsQuery($order));
+        $tagsTotal   = $order->tags()->count();
+        $pendingActivationCount = $order->tags()->where('status', \Modules\Warehouse\Enums\RetailItemTagStatus::Transferred->value)->count();
 
         $fefoSuggestions = null;
         $selectedProductId = $request->input('product_id');
@@ -64,7 +91,20 @@ class OutboundOrderController extends Controller
             ));
         }
 
-        return view('warehouse::outbound_orders.show', compact('order', 'products', 'fefoSuggestions', 'selectedProductId'));
+        return view('warehouse::outbound_orders.show', compact('order', 'products', 'fefoSuggestions', 'selectedProductId', 'allocations', 'tagsTotal', 'pendingActivationCount'));
+    }
+
+    public function packingSlip(OutboundOrder $order, GetOutboundOrderHandler $handler, GetOutboundOrderTagAllocationsHandler $allocationsHandler)
+    {
+        $this->authorize('view', $order);
+
+        $order       = $handler->handle(new GetOutboundOrderQuery($order));
+        $allocations = $allocationsHandler->handle(new GetOutboundOrderTagAllocationsQuery($order));
+
+        return Pdf::view('warehouse::outbound_orders.packing_slip', compact('order', 'allocations'))
+            ->format('a4')
+            ->withBrowsershot(fn ($browsershot) => $browsershot->setChromePath(config('warehouse.chrome_path', '/usr/bin/google-chrome'))->noSandbox())
+            ->download('phieu-xuat-kho-' . $order->order_number . '.pdf');
     }
 
     public function addBatch(Request $request, OutboundOrder $order, AddPickedBatchAction $action): RedirectResponse

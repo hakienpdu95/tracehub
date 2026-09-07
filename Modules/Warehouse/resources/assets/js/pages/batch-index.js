@@ -33,26 +33,37 @@ function buildColumns(canRecall, csrfToken) {
             },
         },
         {
-            title: 'Hồ sơ & Chứng từ', field: 'compliance_document_number', minWidth: 240, headerSort: false,
+            title: 'Hồ sơ & Chứng từ', field: 'compliance_document_number', minWidth: 260, headerSort: false,
             formatter(cell) {
                 const d = cell.getRow().getData();
-                let html = '<div class="flex flex-col gap-2 py-1">';
+                let html = '<div class="flex flex-col gap-2.5 py-1">';
 
+                html += '<div>';
+                html += '<p class="text-[10px] uppercase tracking-wide text-base-content/40 mb-1">Truy vết nội bộ</p>';
                 html += '<a href="' + esc(d.inbound_receipt_url) + '" class="flex items-center gap-1.5 text-xs link link-hover">'
-                    + '<svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'
+                    + '<svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>'
                     + 'Xem phiếu nhập kho gốc</a>';
+                html += '</div>';
 
+                html += '<div title="Tài liệu này sẽ hiển thị trực tiếp cho người tiêu dùng khi quét mã QR">';
+                html += '<p class="text-[10px] uppercase tracking-wide text-base-content/40 mb-1">Hồ sơ công khai</p>';
                 if (d.compliance_document_number) {
                     html += '<a href="' + esc(d.compliance_file_url || '#') + '"'
                         + (d.compliance_file_url ? ' target="_blank" rel="noopener"' : '')
                         + ' class="flex items-center gap-1.5 text-xs text-blue-600 hover:underline font-medium">'
-                        + '<svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h4M9 17H7a2 2 0 01-2-2V7a2 2 0 012-2h6l4 4v6a2 2 0 01-2 2h-2m-4 0h4"/></svg>'
+                        + '<svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75l1.5 1.5 4.5-4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
                         + 'Bản công bố / COA (' + esc(d.compliance_document_number) + ')</a>';
                 } else {
+                    html += '<div class="flex items-center gap-1.5 flex-wrap">';
                     html += '<p class="flex items-center gap-1.5 text-xs text-base-content/40">'
-                        + '<svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h4M9 17H7a2 2 0 01-2-2V7a2 2 0 012-2h6l4 4v6a2 2 0 01-2 2h-2m-4 0h4"/></svg>'
-                        + 'Chưa có bản công bố / COA</p>';
+                        + '<svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0-13.5v4.5m0 3.75h.008v.008H12v-.008z"/></svg>'
+                        + 'Chưa cấu hình Bản công bố</p>';
+                    if (d.compliance_create_url) {
+                        html += '<a href="' + esc(d.compliance_create_url) + '" class="text-xs link link-primary font-medium">Cập nhật ngay</a>';
+                    }
+                    html += '</div>';
                 }
+                html += '</div>';
 
                 if (d.adverse_event_reports_count > 0) {
                     html += '<a href="' + esc(d.incidents_url) + '" class="flex items-center gap-1.5 text-xs link link-hover text-error font-medium">'

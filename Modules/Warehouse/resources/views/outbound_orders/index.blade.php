@@ -3,8 +3,9 @@
 
 @section('content')
 <div x-data="outboundOrderListPage({{ Js::from([
-    'apiUrl'   => route('backend.api.outbound-orders'),
-    'statuses' => $statuses,
+    'apiUrl'    => route('backend.api.outbound-orders'),
+    'statuses'  => $statuses,
+    'canUpdate' => auth()->user()->can('update', new \Modules\Warehouse\Models\OutboundOrder),
 ]) }})">
 
     <div class="flex flex-wrap items-center justify-between gap-3 mb-5">

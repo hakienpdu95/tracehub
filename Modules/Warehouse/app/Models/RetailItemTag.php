@@ -25,6 +25,7 @@ class RetailItemTag extends Model
         'status',
         'sold_at',
         'external_order_id',
+        'outbound_order_id',
     ];
 
     protected function casts(): array
@@ -50,5 +51,10 @@ class RetailItemTag extends Model
     public function externalOrder(): BelongsTo
     {
         return $this->belongsTo(\Modules\Sapo\Models\ExternalOrder::class);
+    }
+
+    public function outboundOrder(): BelongsTo
+    {
+        return $this->belongsTo(OutboundOrder::class);
     }
 }

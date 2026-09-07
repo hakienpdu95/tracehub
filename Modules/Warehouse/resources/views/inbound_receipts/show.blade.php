@@ -204,6 +204,11 @@
             <div class="card-body">
                 <h2 class="text-base font-semibold mb-3">Thêm chứng từ chuyến hàng</h2>
 
+                <div class="alert alert-warning py-2.5 px-3 mb-3 text-xs items-start">
+                    <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+                    <span><strong>Lưu ý:</strong> Các chứng từ tải lên tại đây (Hóa đơn VAT, Tờ khai hải quan, Vận đơn...) được bảo mật tuyệt đối dùng cho lưu hành nội bộ và kế toán. Khách hàng quét mã QR truy xuất sẽ KHÔNG nhìn thấy dữ liệu này.</span>
+                </div>
+
                 @if($errors->any() && old('_form') === 'document')
                 <div class="alert alert-error py-2 px-3 mb-3 text-xs">
                     <ul class="list-disc list-inside space-y-0.5">

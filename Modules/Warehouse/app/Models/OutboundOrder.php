@@ -34,6 +34,11 @@ class OutboundOrder extends TenantAwareModel
         return $this->hasMany(OutboundPickedBatch::class);
     }
 
+    public function tags(): HasMany
+    {
+        return $this->hasMany(RetailItemTag::class);
+    }
+
     public function totalQuantity(): int
     {
         return (int) $this->pickedBatches->sum('quantity');

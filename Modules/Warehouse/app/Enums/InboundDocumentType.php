@@ -4,16 +4,18 @@ namespace Modules\Warehouse\Enums;
 
 enum InboundDocumentType: string
 {
-    case CustomsDeclaration = 'customs_declaration';
-    case CoCertificate      = 'co_cert';
     case VatInvoice         = 'vat_invoice';
+    case CustomsDeclaration = 'customs_declaration';
+    case HandoverRecord     = 'handover_record';
+    case BillOfLading       = 'bill_of_lading';
 
     public function label(): string
     {
         return match ($this) {
+            self::VatInvoice         => 'Hóa đơn GTGT (VAT)',
             self::CustomsDeclaration => 'Tờ khai hải quan',
-            self::CoCertificate      => 'Giấy chứng nhận xuất xứ (C/O)',
-            self::VatInvoice         => 'Hóa đơn VAT',
+            self::HandoverRecord     => 'Biên bản bàn giao',
+            self::BillOfLading       => 'Vận đơn (Bill of Lading)',
         };
     }
 }

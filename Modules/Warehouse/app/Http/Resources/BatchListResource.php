@@ -39,6 +39,7 @@ class BatchListResource extends JsonResource
 
             'compliance_document_number' => $compliance?->document_number,
             'compliance_file_url'        => $compliance?->file_url,
+            'compliance_create_url'      => $product ? route('backend.products.show', $product) . '#add-compliance' : null,
 
             'adverse_event_reports_count' => $this->adverse_event_reports_count,
 

@@ -23,6 +23,7 @@ class InboundReceiptListResource extends JsonResource
             'status_badge' => $status->badgeClass(),
 
             'show_url' => route('backend.inbound-receipts.show', $this->resource),
+            'edit_url' => route('backend.inbound-receipts.edit', $this->resource),
         ];
     }
 }

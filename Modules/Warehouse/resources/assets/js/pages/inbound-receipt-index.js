@@ -5,7 +5,7 @@ function esc(v) {
         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function buildColumns() {
+function buildColumns(canUpdate) {
     return [
         {
             title: 'Mã phiếu', field: 'receipt_number', minWidth: 200, sorter: 'string', frozen: true,
@@ -35,10 +35,23 @@ function buildColumns() {
             },
         },
         {
-            title: 'Thao tác', field: 'id', width: 100, hozAlign: 'center', headerSort: false, frozen: true,
+            title: 'Thao tác', field: 'id', width: 140, hozAlign: 'center', headerSort: false, frozen: true,
             formatter(cell) {
                 const d = cell.getRow().getData();
-                return '<a href="' + esc(d.show_url) + '" class="btn btn-ghost btn-xs">Xem</a>';
+                let html = '<div class="flex items-center justify-center gap-1">';
+
+                html += '<a href="' + esc(d.show_url) + '" class="btn btn-ghost btn-xs btn-square text-base-content/40 hover:text-info" title="Xem">'
+                    + '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>'
+                    + '</a>';
+
+                if (canUpdate) {
+                    html += '<a href="' + esc(d.edit_url) + '" class="btn btn-ghost btn-xs btn-square text-base-content/40 hover:text-warning" title="Sửa">'
+                        + '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>'
+                        + '</a>';
+                }
+
+                html += '</div>';
+                return html;
             },
         },
     ];
@@ -48,11 +61,12 @@ document.addEventListener('alpine:init', () => {
 
     Alpine.data('inboundReceiptListPage', (serverData = {}) => {
         const {
-            apiUrl   = '',
-            statuses = [],
+            apiUrl    = '',
+            statuses  = [],
+            canUpdate = false,
         } = serverData;
 
-        const COLUMNS = buildColumns();
+        const COLUMNS = buildColumns(canUpdate);
 
         let tableInst = null;
 
