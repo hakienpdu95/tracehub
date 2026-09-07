@@ -2,6 +2,9 @@
 @section('title', 'Kho tem tiền định danh')
 
 @section('content')
+<div x-data="tagRollListPage({{ Js::from([
+    'apiUrl' => route('backend.api.tag-rolls'),
+]) }})">
 <div class="mb-6">
     <h1 class="text-2xl font-bold text-base-content">Kho tem tiền định danh (Pre-serialized Tags)</h1>
     <p class="text-sm text-base-content/50 mt-0.5">Chỉ dùng để in tem, xem lịch sử và tải lại file. Việc gán tem cho lô hàng thực hiện tại trang chi tiết Lô hàng.</p>
@@ -99,41 +102,21 @@
     <div class="card-body">
         <h2 class="text-base font-semibold mb-1">Lịch sử các cuộn đã in</h2>
         <p class="text-xs text-base-content/50 mb-3">Để gán sản phẩm cho một dải tem, vào trang chi tiết Lô hàng cần dán tem.</p>
-        <div class="overflow-x-auto">
-            <table class="table table-sm">
-                <thead>
-                    <tr>
-                        <th>Prefix</th>
-                        <th>Dải visual_sequence</th>
-                        <th>Tổng số</th>
-                        <th>Chưa gắn kết</th>
-                        <th>Đã gắn kết</th>
-                        <th>Ngày in</th>
-                        <th>Người in</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($rolls as $roll)
-                    <tr class="hover cursor-pointer" onclick="window.location='{{ route('backend.tag-rolls.show', $roll) }}'">
-                        <td class="font-mono">{{ $roll->prefix ?: '—' }}</td>
-                        <td class="font-mono">{{ $roll->from_sequence }}–{{ $roll->to_sequence }}</td>
-                        <td>{{ number_format($roll->count) }}</td>
-                        <td><span class="badge badge-ghost badge-sm">{{ number_format($roll->live_counts['provisioned']) }}</span></td>
-                        <td><span class="badge badge-success badge-sm">{{ number_format($roll->live_counts['bound']) }}</span></td>
-                        <td>{{ $roll->created_at?->format('d/m/Y H:i') }}</td>
-                        <td>{{ $roll->creator?->name ?? '—' }}</td>
-                        <td class="text-right"><a href="{{ route('backend.tag-rolls.show', $roll) }}" class="link link-primary text-xs">Xem chi tiết cuộn</a></td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="8" class="text-center text-sm text-base-content/50 py-6">Chưa in cuộn tem nào.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        @if($rolls->hasPages())
-        <div class="mt-3">{{ $rolls->links() }}</div>
-        @endif
+    </div>
+    <div class="card-body p-0 overflow-hidden rounded-2xl tabulator-daisy">
+        <div id="tag-roll-table"></div>
     </div>
 </div>
+</div>
 @endsection
+
+@push('styles')
+    <x-tabulator-theme />
+@endpush
+
+@push('scripts')
+    @vite([
+        'resources/js/modules/tabulator.js',
+        'Modules/Warehouse/resources/assets/js/warehouse.js',
+    ], 'build/backend')
+@endpush

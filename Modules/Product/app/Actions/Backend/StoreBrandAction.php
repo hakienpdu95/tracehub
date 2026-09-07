@@ -2,6 +2,7 @@
 
 namespace Modules\Product\Actions\Backend;
 
+use App\Services\Media\MediaUploadService;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Modules\Product\Data\Requests\StoreBrandData;
 use Modules\Product\Models\Brand;
@@ -10,10 +11,19 @@ class StoreBrandAction
 {
     use AsAction;
 
-    public function handle(StoreBrandData $data): Brand
+    public function __construct(private readonly MediaUploadService $mediaUploadService) {}
+
+    public function handle(StoreBrandData $data, ?string $logoMediaUuid = null): Brand
     {
-        return Brand::create([
-            'name' => $data->name,
+        $brand = Brand::create([
+            'name'        => $data->name,
+            'description' => $data->description,
         ]);
+
+        if ($logoMediaUuid) {
+            $this->mediaUploadService->reassociateFilePondDrafts($brand, [$logoMediaUuid], 'logo');
+        }
+
+        return $brand;
     }
 }

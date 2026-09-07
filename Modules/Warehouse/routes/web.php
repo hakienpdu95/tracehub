@@ -1,6 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Warehouse\Http\Controllers\Api\BatchApiController;
+use Modules\Warehouse\Http\Controllers\Api\InboundReceiptApiController;
+use Modules\Warehouse\Http\Controllers\Api\OutboundOrderApiController;
+use Modules\Warehouse\Http\Controllers\Api\SapoSyncLogApiController;
+use Modules\Warehouse\Http\Controllers\Api\TagRollApiController;
 use Modules\Warehouse\Http\Controllers\BatchController;
 use Modules\Warehouse\Http\Controllers\BatchDocumentController;
 use Modules\Warehouse\Http\Controllers\BatchInReceiptController;
@@ -78,4 +83,12 @@ Route::middleware(['auth'])->prefix('dashboard')->name('backend.')->group(functi
     Route::post('outbound-orders/{order}/complete', [OutboundOrderController::class, 'complete'])->name('outbound-orders.complete');
     Route::post('outbound-orders/{order}/activate-tags', [OutboundOrderController::class, 'activateTags'])->name('outbound-orders.activate-tags');
     Route::post('outbound-orders/{order}/cancel', [OutboundOrderController::class, 'cancel'])->name('outbound-orders.cancel');
+});
+
+Route::middleware(['auth'])->prefix('backend/api')->name('backend.api.')->group(function () {
+    Route::get('batches', [BatchApiController::class, 'index'])->name('batches');
+    Route::get('inbound-receipts', [InboundReceiptApiController::class, 'index'])->name('inbound-receipts');
+    Route::get('outbound-orders', [OutboundOrderApiController::class, 'index'])->name('outbound-orders');
+    Route::get('sapo-sync-log', [SapoSyncLogApiController::class, 'index'])->name('sapo-sync-log');
+    Route::get('tag-rolls', [TagRollApiController::class, 'index'])->name('tag-rolls');
 });

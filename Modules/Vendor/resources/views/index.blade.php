@@ -2,95 +2,157 @@
 @section('title', 'Nhà cung cấp')
 
 @section('content')
-<div class="flex flex-wrap items-center justify-between gap-3 mb-5">
-    <div>
-        <h1 class="text-2xl font-bold text-base-content">Nhà cung cấp</h1>
-        <p class="text-sm text-base-content/50 mt-0.5">Quản lý nhà cung cấp và hồ sơ pháp lý đi kèm</p>
-    </div>
-    @can('create', \Modules\Vendor\Models\Vendor::class)
-    <a href="{{ route('backend.vendors.create') }}" class="btn btn-primary btn-sm gap-1.5">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
-        Thêm nhà cung cấp
-    </a>
-    @endcan
-</div>
+<div x-data="vendorListPage({{ Js::from([
+    'apiUrl'    => route('backend.api.vendors'),
+    'statuses'  => $statuses,
+    'canDelete' => auth()->user()->can('delete', new \Modules\Vendor\Models\Vendor),
+]) }})">
 
-@if(session('success'))
-<div class="alert alert-success py-2.5 px-4 mb-5 text-sm">{{ session('success') }}</div>
-@endif
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+        <div>
+            <h1 class="text-2xl font-bold text-base-content">Nhà cung cấp</h1>
+            <p class="text-sm text-base-content/50 mt-0.5">Quản lý nhà cung cấp và hồ sơ pháp lý đi kèm</p>
+        </div>
+        <div class="flex items-center gap-2">
 
-<div class="card bg-base-100 shadow-sm border border-base-200 mb-4">
-    <div class="card-body py-3 px-4">
-        <form method="GET" class="flex flex-wrap items-end gap-3">
-            <div class="form-control flex-1 min-w-[200px]">
-                <label class="label py-0 pb-1"><span class="label-text text-xs">Tìm kiếm</span></label>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Tên, mã NCC hoặc mã số thuế..."
-                       class="input input-bordered input-sm w-full">
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-ghost btn-sm gap-1.5">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+                    </svg>
+                    Cột
+                </label>
+                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box shadow-lg border border-base-200 w-48 z-50 p-2">
+                    <template x-for="col in toggleableCols" :key="col.field">
+                        <li>
+                            <label class="flex items-center gap-2 cursor-pointer py-1.5 px-2 rounded-lg hover:bg-base-200">
+                                <input type="checkbox" class="checkbox checkbox-xs"
+                                       :checked="!hiddenCols.includes(col.field)"
+                                       @change="toggleCol(col.field)"/>
+                                <span x-text="col.title" class="text-sm"></span>
+                            </label>
+                        </li>
+                    </template>
+                </ul>
             </div>
-            <div class="form-control">
-                <label class="label py-0 pb-1"><span class="label-text text-xs">Trạng thái</span></label>
-                <select name="status" class="select select-bordered select-sm">
-                    <option value="">Tất cả</option>
-                    @foreach($statuses as $status)
-                    <option value="{{ $status['value'] }}" @selected(request('status') === $status['value'])>{{ $status['label'] }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <button type="submit" class="btn btn-sm btn-outline">Lọc</button>
-        </form>
-    </div>
-</div>
 
-<div class="card bg-base-100 shadow-sm border border-base-200">
-    <div class="overflow-x-auto">
-        <table class="table table-sm">
-            <thead>
-                <tr>
-                    <th>Mã NCC</th>
-                    <th>Tên</th>
-                    <th>Mã số thuế</th>
-                    <th>Trạng thái</th>
-                    <th>Chứng chỉ mới nhất</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($vendors as $vendor)
-                <tr>
-                    <td class="font-mono">{{ $vendor->vendor_code ?? '—' }}</td>
-                    <td>
-                        <a href="{{ route('backend.vendors.show', $vendor) }}" class="link link-hover font-medium">{{ $vendor->name }}</a>
-                    </td>
-                    <td class="font-mono">{{ $vendor->tax_code }}</td>
-                    <td><span class="badge {{ $vendor->status->badgeClass() }} badge-sm">{{ $vendor->status->label() }}</span></td>
-                    <td>
-                        @if($vendor->latestCertificate)
-                        {{ $vendor->latestCertificate->certificate_type->label() }}
-                        @if($vendor->latestCertificate->isExpired())
-                        <span class="badge badge-error badge-xs ml-1">Hết hạn</span>
-                        @elseif($vendor->latestCertificate->isExpiringWithinDays(30))
-                        <span class="badge badge-warning badge-xs ml-1">Sắp hết hạn</span>
-                        @endif
-                        @else
-                        <span class="text-xs text-base-content/40">Chưa có</span>
-                        @endif
-                    </td>
-                    <td class="text-right">
-                        <a href="{{ route('backend.vendors.show', $vendor) }}" class="btn btn-ghost btn-xs">Xem</a>
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="6" class="text-center text-sm text-base-content/50 py-6">Chưa có nhà cung cấp nào.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+            @can('create', \Modules\Vendor\Models\Vendor::class)
+            <a href="{{ route('backend.vendors.create') }}" class="btn btn-primary btn-sm gap-1.5">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Thêm nhà cung cấp
+            </a>
+            @endcan
+
+        </div>
     </div>
-    @if($vendors->hasPages())
-    <div class="card-body py-3 px-4 border-t border-base-200">
-        {{ $vendors->withQueryString()->links() }}
-    </div>
+
+    @if(session('success'))
+    <div class="alert alert-success py-2.5 px-4 mb-5 text-sm">{{ session('success') }}</div>
     @endif
+
+    <div class="card bg-base-100 shadow-sm border border-base-200 mb-4">
+        <div class="card-body py-3 px-4">
+            <div class="flex flex-wrap gap-3 items-end">
+
+                <div class="form-control flex-1 min-w-52">
+                    <label class="label py-0.5">
+                        <span class="label-text text-xs font-medium">Tìm kiếm</span>
+                        <span class="label-text-alt text-xs text-base-content/40">Tên, mã NCC, MST</span>
+                    </label>
+                    <div class="input input-sm input-bordered flex items-center gap-2 bg-base-100">
+                        <svg class="w-3.5 h-3.5 text-base-content/40 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input id="filter-search" type="text"
+                               x-model="filters.search"
+                               @input.debounce.350ms="onFilterChange()"
+                               placeholder="Nhập từ khóa..."
+                               class="grow bg-transparent outline-none text-sm"/>
+                        <button x-show="filters.search" @click="clearSearch()"
+                                class="text-base-content/30 hover:text-base-content transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-control w-56">
+                    <label class="label py-0.5">
+                        <span class="label-text text-xs font-medium">Trạng thái</span>
+                    </label>
+                    <select x-model="filters.status" @change="onFilterChange()" class="select select-sm select-bordered w-full">
+                        <option value="">Tất cả</option>
+                        @foreach($statuses as $status)
+                        <option value="{{ $status['value'] }}">{{ $status['text'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-control ml-auto">
+                    <label class="label py-0.5 invisible"><span class="label-text text-xs">.</span></label>
+                    <button @click="reset()" x-show="hasFilters" x-transition
+                            class="btn btn-ghost btn-sm gap-1.5 text-error">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Đặt lại
+                    </button>
+                </div>
+
+            </div>
+
+            <div x-show="activeChips.length > 0" x-transition
+                 class="flex flex-wrap gap-2 pt-3 mt-3 border-t border-base-200">
+                <span class="text-xs text-base-content/40 self-center">Đang lọc:</span>
+                <template x-for="chip in activeChips" :key="chip.key">
+                    <span class="badge badge-sm gap-1 cursor-pointer hover:badge-error transition-colors"
+                          @click="removeChip(chip.key)">
+                        <span x-text="chip.label"></span>
+                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </span>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body p-0 overflow-hidden rounded-2xl tabulator-daisy">
+            <div id="vendor-table"></div>
+        </div>
+    </div>
+
 </div>
+
+<dialog id="deleteModal" class="modal">
+    <div class="modal-box max-w-sm">
+        <h3 class="font-bold text-lg text-error">Xác nhận xóa</h3>
+        <p class="py-3 text-sm text-base-content/70">
+            Bạn có chắc muốn xóa nhà cung cấp
+            <strong id="deleteItemName" class="text-base-content"></strong>?
+        </p>
+        <p class="text-xs text-error/70">Toàn bộ chứng chỉ và dữ liệu liên quan sẽ bị xóa theo.</p>
+        <div class="modal-action mt-4">
+            <button id="confirmDeleteBtn" class="btn btn-error btn-sm">Xóa</button>
+            <button class="btn btn-ghost btn-sm" onclick="deleteModal.close()">Hủy</button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
+</dialog>
 @endsection
+
+@push('styles')
+    <x-tabulator-theme />
+@endpush
+
+@push('scripts')
+    @vite([
+        'resources/js/modules/tabulator.js',
+        'Modules/Vendor/resources/assets/js/vendor.js',
+    ], 'build/backend')
+@endpush

@@ -19,8 +19,6 @@ use Modules\Warehouse\Queries\GetBatchHandler;
 use Modules\Warehouse\Queries\GetBatchQuery;
 use Modules\Warehouse\Queries\GetBatchTagAllocationsHandler;
 use Modules\Warehouse\Queries\GetBatchTagAllocationsQuery;
-use Modules\Warehouse\Queries\ListBatchesHandler;
-use Modules\Warehouse\Queries\ListBatchesQuery;
 
 class BatchController extends Controller
 {
@@ -29,22 +27,13 @@ class BatchController extends Controller
         $this->authorizeResource(Batch::class, 'batch');
     }
 
-    public function index(Request $request, ListBatchesHandler $handler)
+    public function index()
     {
-        $batches = $handler->handle(new ListBatchesQuery(
-            page:      max(1, (int) $request->integer('page', 1)),
-            perPage:   10,
-            sortField: (string) $request->input('sort', 'exp_date'),
-            sortDir:   (string) $request->input('dir', 'asc'),
-            search:    $request->input('search'),
-            status:    $request->input('status'),
-        ));
-
         $statuses = collect(BatchStatus::cases())
-            ->map(fn ($s) => ['value' => $s->value, 'label' => $s->label()])
+            ->map(fn ($s) => ['value' => $s->value, 'text' => $s->label()])
             ->all();
 
-        return view('warehouse::batches.index', compact('batches', 'statuses'));
+        return view('warehouse::batches.index', compact('statuses'));
     }
 
     public function show(Batch $batch, GetBatchHandler $handler, GetBatchTagAllocationsHandler $allocationsHandler)

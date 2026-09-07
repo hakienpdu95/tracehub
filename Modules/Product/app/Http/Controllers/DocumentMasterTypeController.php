@@ -22,9 +22,11 @@ class DocumentMasterTypeController extends Controller
 
     public function index()
     {
-        $documentMasterTypes = DocumentMasterType::orderBy('applicable_category')->orderBy('name')->paginate(25);
+        $categoryTypes = collect(ProductCategoryType::cases())
+            ->map(fn ($c) => ['value' => $c->value, 'text' => $c->label()])
+            ->all();
 
-        return view('product::document_master_types.index', compact('documentMasterTypes'));
+        return view('product::document_master_types.index', compact('categoryTypes'));
     }
 
     public function create()

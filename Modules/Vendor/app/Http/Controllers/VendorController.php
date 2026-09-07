@@ -15,8 +15,6 @@ use Modules\Vendor\Enums\VendorStatus;
 use Modules\Vendor\Models\Vendor;
 use Modules\Vendor\Queries\GetVendorHandler;
 use Modules\Vendor\Queries\GetVendorQuery;
-use Modules\Vendor\Queries\ListVendorsHandler;
-use Modules\Vendor\Queries\ListVendorsQuery;
 
 class VendorController extends Controller
 {
@@ -25,22 +23,13 @@ class VendorController extends Controller
         $this->authorizeResource(Vendor::class, 'vendor');
     }
 
-    public function index(Request $request, ListVendorsHandler $handler)
+    public function index()
     {
-        $vendors = $handler->handle(new ListVendorsQuery(
-            page:      max(1, (int) $request->integer('page', 1)),
-            perPage:   25,
-            sortField: (string) $request->input('sort', 'created_at'),
-            sortDir:   (string) $request->input('dir', 'desc'),
-            search:    $request->input('search'),
-            status:    $request->input('status'),
-        ));
-
         $statuses = collect(VendorStatus::cases())
-            ->map(fn ($s) => ['value' => $s->value, 'label' => $s->label()])
+            ->map(fn ($s) => ['value' => $s->value, 'text' => $s->label()])
             ->all();
 
-        return view('vendor::index', compact('vendors', 'statuses'));
+        return view('vendor::index', compact('statuses'));
     }
 
     public function create()

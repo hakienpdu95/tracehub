@@ -17,8 +17,6 @@ use Modules\Warehouse\Enums\InboundReceiptStatus;
 use Modules\Warehouse\Models\InboundReceipt;
 use Modules\Warehouse\Queries\GetInboundReceiptHandler;
 use Modules\Warehouse\Queries\GetInboundReceiptQuery;
-use Modules\Warehouse\Queries\ListInboundReceiptsHandler;
-use Modules\Warehouse\Queries\ListInboundReceiptsQuery;
 
 class InboundReceiptController extends Controller
 {
@@ -27,22 +25,13 @@ class InboundReceiptController extends Controller
         $this->authorizeResource(InboundReceipt::class, 'inbound_receipt');
     }
 
-    public function index(Request $request, ListInboundReceiptsHandler $handler)
+    public function index()
     {
-        $inboundReceipts = $handler->handle(new ListInboundReceiptsQuery(
-            page:      max(1, (int) $request->integer('page', 1)),
-            perPage:   25,
-            sortField: (string) $request->input('sort', 'received_date'),
-            sortDir:   (string) $request->input('dir', 'desc'),
-            search:    $request->input('search'),
-            status:    $request->input('status'),
-        ));
-
         $statuses = collect(InboundReceiptStatus::cases())
-            ->map(fn ($s) => ['value' => $s->value, 'label' => $s->label()])
+            ->map(fn ($s) => ['value' => $s->value, 'text' => $s->label()])
             ->all();
 
-        return view('warehouse::inbound_receipts.index', compact('inboundReceipts', 'statuses'));
+        return view('warehouse::inbound_receipts.index', compact('statuses'));
     }
 
     public function create()

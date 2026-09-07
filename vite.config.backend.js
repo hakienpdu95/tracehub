@@ -70,6 +70,10 @@ const JS_OUTPUT = {
   'user':                 'assets/modules/user.[hash].js',
   'organization':         'assets/modules/organization.[hash].js',
   'activity-log':           'assets/modules/activity-log.[hash].js',
+  'vendor':               'assets/modules/vendor.[hash].js',
+  'product':              'assets/modules/product.[hash].js',
+  'warehouse':            'assets/modules/warehouse.[hash].js',
+  'compliance':           'assets/modules/compliance.[hash].js',
 };
 
 /** CSS asset name → output path.
@@ -90,6 +94,8 @@ const CSS_OUTPUT = {
   'user.css':                 'assets/modules/user.[hash].css',
   'organization.css':         'assets/modules/organization.[hash].css',
   'activity-log.css':           'assets/modules/activity-log.[hash].css',
+  'vendor.css':               'assets/modules/vendor.[hash].css',
+  'product.css':              'assets/modules/product.[hash].css',
 };
 
 // ─── Module input entries ─────────────────────────────────────────────
@@ -107,6 +113,16 @@ const MODULE_ENTRIES = [
   // ActivityLog
   'Modules/ActivityLog/resources/assets/sass/activity-log.scss',
   'Modules/ActivityLog/resources/assets/js/activity-log.js',
+  // Vendor
+  'Modules/Vendor/resources/assets/sass/vendor.scss',
+  'Modules/Vendor/resources/assets/js/vendor.js',
+  // Product
+  'Modules/Product/resources/assets/sass/product.scss',
+  'Modules/Product/resources/assets/js/product.js',
+  // Warehouse
+  'Modules/Warehouse/resources/assets/js/warehouse.js',
+  // Compliance
+  'Modules/Compliance/resources/assets/js/compliance.js',
 ];
 
 // ─────────────────────────────────────────────────────────────────────

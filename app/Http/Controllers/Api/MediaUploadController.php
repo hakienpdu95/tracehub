@@ -54,6 +54,7 @@ class MediaUploadController extends Controller
     private const ENTITY_MAP = [
         'organization'            => \Modules\Organization\Models\Organization::class,
         'vendor_certificate'      => \Modules\Vendor\Models\VendorCertificate::class,
+        'brand'                   => \Modules\Product\Models\Brand::class,
     ];
 
     public function __construct(
@@ -144,7 +145,7 @@ class MediaUploadController extends Controller
         $uploadedBy = $media->getCustomProperty('uploaded_by');
 
         // Non-draft files: only the uploader may revert, and only for managed collections
-        if (! $isDraft && (int) $uploadedBy !== auth()->id()) {
+        if (! $isDraft && (string) $uploadedBy !== (string) auth()->id()) {
             return response()->json(['message' => 'Không có quyền xóa file này.'], 403);
         }
 
@@ -171,7 +172,7 @@ class MediaUploadController extends Controller
 
         if ($contextType && $contextId && isset(self::ENTITY_MAP[$contextType])) {
             $class = self::ENTITY_MAP[$contextType];
-            $model = $class::query()->find((int) $contextId);
+            $model = $class::query()->find($contextId);
 
             if ($model instanceof HasMedia) {
                 return $model;

@@ -26,16 +26,9 @@ class TagProvisioningController extends Controller
             'bound'       => RetailItemTag::where('status', '!=', RetailItemTagStatus::Provisioned->value)->count(),
         ];
 
-        $rolls = TagRoll::with('creator')->latest('created_at')->paginate(15);
-        $rolls->getCollection()->transform(function (TagRoll $roll) {
-            $roll->setAttribute('live_counts', $roll->liveCounts());
-
-            return $roll;
-        });
-
         $prefixes = TagRoll::query()->distinct()->orderBy('prefix')->pluck('prefix')->filter()->values();
 
-        return view('warehouse::tag_rolls.index', compact('stats', 'rolls', 'prefixes'));
+        return view('warehouse::tag_rolls.index', compact('stats', 'prefixes'));
     }
 
     public function show(TagRoll $roll, GetTagRollAllocationMapHandler $handler): \Illuminate\View\View

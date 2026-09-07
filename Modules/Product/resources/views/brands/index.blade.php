@@ -2,81 +2,91 @@
 @section('title', 'Thương hiệu')
 
 @section('content')
-<div class="flex flex-wrap items-center justify-between gap-3 mb-5">
-    <div>
-        <h1 class="text-2xl font-bold text-base-content">Thương hiệu</h1>
-        <p class="text-sm text-base-content/50 mt-0.5">Từ điển thương hiệu — tránh nhập tay gây trùng lặp dữ liệu</p>
-    </div>
-    <a href="{{ route('backend.products.index') }}" class="btn btn-ghost btn-sm">Quay lại danh mục</a>
-</div>
+<div x-data="brandListPage({{ Js::from([
+    'apiUrl'    => route('backend.api.brands'),
+    'canDelete' => auth()->user()->can('delete', new \Modules\Product\Models\Brand),
+]) }})">
 
-@if(session('success'))
-<div class="alert alert-success py-2.5 px-4 mb-5 text-sm">{{ session('success') }}</div>
-@endif
-
-<div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
-
-    <div class="card bg-base-100 shadow-sm border border-base-200">
-        <div class="overflow-x-auto">
-            <table class="table table-sm">
-                <thead>
-                    <tr>
-                        <th>Tên thương hiệu</th>
-                        <th>Số sản phẩm</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($brands as $brand)
-                    <tr>
-                        <td class="font-medium">{{ $brand->name }}</td>
-                        <td>{{ $brand->products_count }}</td>
-                        <td class="text-right">
-                            @can('delete', \Modules\Product\Models\Product::class)
-                            <form method="POST" action="{{ route('backend.brands.destroy', $brand) }}"
-                                  onsubmit="return confirm('Xóa thương hiệu này?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-ghost btn-xs text-error" @disabled($brand->products_count > 0)>Xóa</button>
-                            </form>
-                            @endcan
-                        </td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="3" class="text-center text-sm text-base-content/50 py-6">Chưa có thương hiệu nào.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+        <div>
+            <h1 class="text-2xl font-bold text-base-content">Thương hiệu</h1>
+            <p class="text-sm text-base-content/50 mt-0.5">Từ điển thương hiệu — tránh nhập tay gây trùng lặp dữ liệu</p>
         </div>
-        @if($brands->hasPages())
-        <div class="card-body py-3 px-4 border-t border-base-200">
-            {{ $brands->links() }}
+        <div class="flex items-center gap-2">
+            <a href="{{ route('backend.products.index') }}" class="btn btn-ghost btn-sm">Quay lại danh mục</a>
+            @can('create', \Modules\Product\Models\Brand::class)
+            <a href="{{ route('backend.brands.create') }}" class="btn btn-primary btn-sm gap-1.5">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Thêm thương hiệu
+            </a>
+            @endcan
         </div>
-        @endif
     </div>
 
-    @can('create', \Modules\Product\Models\Product::class)
-    <div class="card bg-base-100 shadow-sm border border-base-200">
-        <div class="card-body">
-            <h2 class="text-base font-semibold mb-3">Thêm thương hiệu mới</h2>
+    @if(session('success'))
+    <div class="alert alert-success py-2.5 px-4 mb-5 text-sm">{{ session('success') }}</div>
+    @endif
 
-            @if($errors->any())
-            <div class="alert alert-error py-2 px-3 mb-3 text-xs">
-                <ul class="list-disc list-inside space-y-0.5">
-                    @foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach
-                </ul>
+    <div class="card bg-base-100 shadow-sm border border-base-200 mb-4">
+        <div class="card-body py-3 px-4">
+            <div class="form-control max-w-sm">
+                <label class="label py-0.5">
+                    <span class="label-text text-xs font-medium">Tìm kiếm</span>
+                    <span class="label-text-alt text-xs text-base-content/40">Tên, mô tả</span>
+                </label>
+                <div class="input input-sm input-bordered flex items-center gap-2 bg-base-100">
+                    <svg class="w-3.5 h-3.5 text-base-content/40 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input id="filter-search" type="text"
+                           x-model="filters.search"
+                           @input.debounce.350ms="onFilterChange()"
+                           placeholder="Nhập từ khóa..."
+                           class="grow bg-transparent outline-none text-sm"/>
+                    <button x-show="filters.search" @click="clearSearch()"
+                            class="text-base-content/30 hover:text-base-content transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
-            @endif
-
-            <form method="POST" action="{{ route('backend.brands.store') }}" class="flex gap-2">
-                @csrf
-                <input type="text" name="name" value="{{ old('name') }}" placeholder="Tên thương hiệu"
-                       class="input input-bordered input-sm flex-1">
-                <button type="submit" class="btn btn-primary btn-sm">Thêm</button>
-            </form>
         </div>
     </div>
-    @endcan
+
+    <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body p-0 overflow-hidden rounded-2xl tabulator-daisy">
+            <div id="brand-table"></div>
+        </div>
+    </div>
 
 </div>
+
+<dialog id="deleteModal" class="modal">
+    <div class="modal-box max-w-sm">
+        <h3 class="font-bold text-lg text-error">Xác nhận xóa</h3>
+        <p class="py-3 text-sm text-base-content/70">
+            Bạn có chắc muốn xóa thương hiệu
+            <strong id="deleteItemName" class="text-base-content"></strong>?
+        </p>
+        <div class="modal-action mt-4">
+            <button id="confirmDeleteBtn" class="btn btn-error btn-sm">Xóa</button>
+            <button class="btn btn-ghost btn-sm" onclick="deleteModal.close()">Hủy</button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
+</dialog>
 @endsection
+
+@push('styles')
+    <x-tabulator-theme />
+@endpush
+
+@push('scripts')
+    @vite([
+        'resources/js/modules/tabulator.js',
+        'Modules/Product/resources/assets/js/product.js',
+    ], 'build/backend')
+@endpush

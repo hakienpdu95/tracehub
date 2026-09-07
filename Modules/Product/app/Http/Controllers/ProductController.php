@@ -17,8 +17,6 @@ use Modules\Product\Models\Brand;
 use Modules\Product\Models\Product;
 use Modules\Product\Queries\GetProductHandler;
 use Modules\Product\Queries\GetProductQuery;
-use Modules\Product\Queries\ListProductsHandler;
-use Modules\Product\Queries\ListProductsQuery;
 
 class ProductController extends Controller
 {
@@ -27,27 +25,17 @@ class ProductController extends Controller
         $this->authorizeResource(Product::class, 'product');
     }
 
-    public function index(Request $request, ListProductsHandler $handler)
+    public function index()
     {
-        $products = $handler->handle(new ListProductsQuery(
-            page:         max(1, (int) $request->integer('page', 1)),
-            perPage:      25,
-            sortField:    (string) $request->input('sort', 'created_at'),
-            sortDir:      (string) $request->input('dir', 'desc'),
-            search:       $request->input('search'),
-            categoryType: $request->input('category_type'),
-            status:       $request->input('status'),
-        ));
-
         $categoryTypes = collect(ProductCategoryType::cases())
-            ->map(fn ($c) => ['value' => $c->value, 'label' => $c->label()])
+            ->map(fn ($c) => ['value' => $c->value, 'text' => $c->label()])
             ->all();
 
         $statuses = collect(ProductStatus::cases())
-            ->map(fn ($s) => ['value' => $s->value, 'label' => $s->label()])
+            ->map(fn ($s) => ['value' => $s->value, 'text' => $s->label()])
             ->all();
 
-        return view('product::products.index', compact('products', 'categoryTypes', 'statuses'));
+        return view('product::products.index', compact('categoryTypes', 'statuses'));
     }
 
     public function create()

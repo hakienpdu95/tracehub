@@ -21,8 +21,6 @@ use Modules\Warehouse\Queries\GetFefoSuggestionHandler;
 use Modules\Warehouse\Queries\GetFefoSuggestionQuery;
 use Modules\Warehouse\Queries\GetOutboundOrderHandler;
 use Modules\Warehouse\Queries\GetOutboundOrderQuery;
-use Modules\Warehouse\Queries\ListOutboundOrdersHandler;
-use Modules\Warehouse\Queries\ListOutboundOrdersQuery;
 
 class OutboundOrderController extends Controller
 {
@@ -31,17 +29,11 @@ class OutboundOrderController extends Controller
         $this->authorizeResource(OutboundOrder::class, 'order');
     }
 
-    public function index(Request $request, ListOutboundOrdersHandler $handler)
+    public function index()
     {
-        $orders = $handler->handle(new ListOutboundOrdersQuery(
-            page:    max(1, (int) $request->integer('page', 1)),
-            perPage: 25,
-            status:  $request->input('status'),
-        ));
+        $statuses = collect(OutboundOrderStatus::cases())->map(fn ($s) => ['value' => $s->value, 'text' => $s->label()])->all();
 
-        $statuses = collect(OutboundOrderStatus::cases())->map(fn ($s) => ['value' => $s->value, 'label' => $s->label()])->all();
-
-        return view('warehouse::outbound_orders.index', compact('orders', 'statuses'));
+        return view('warehouse::outbound_orders.index', compact('statuses'));
     }
 
     public function create()
