@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Product\Models\Product;
+use Modules\Recall\Models\AdverseEventReport;
 use Modules\Vendor\Models\Vendor;
 use Modules\Warehouse\Enums\BatchStatus;
 
@@ -63,6 +64,11 @@ class Batch extends Model
     public function tags(): HasMany
     {
         return $this->hasMany(RetailItemTag::class);
+    }
+
+    public function adverseEventReports(): HasMany
+    {
+        return $this->hasMany(AdverseEventReport::class);
     }
 
     public function isExpired(): bool

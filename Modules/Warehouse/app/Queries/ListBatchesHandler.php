@@ -19,7 +19,13 @@ class ListBatchesHandler implements QueryHandlerInterface
         $sortField = in_array($query->sortField, self::SORTABLE, true) ? $query->sortField : 'exp_date';
         $sortDir   = $query->sortDir === 'asc' ? 'asc' : 'desc';
 
-        $q = Batch::query()->with(['product', 'vendor']);
+        $q = Batch::query()
+            ->with(['product.latestCompliance', 'vendor', 'inboundReceipt'])
+            ->withCount([
+                'tags',
+                'tags as tags_exported_count' => fn (Builder $tagQuery) => $tagQuery->whereNotNull('external_order_id'),
+                'adverseEventReports',
+            ]);
 
         if ($query->search !== null && $query->search !== '') {
             $term = '%' . $query->search . '%';

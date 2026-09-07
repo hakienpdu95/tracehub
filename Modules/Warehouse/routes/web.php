@@ -49,6 +49,10 @@ Route::middleware(['auth'])->prefix('dashboard')->name('backend.')->group(functi
     Route::get('batches/{batch}/tags', [RetailItemTagController::class, 'index'])->name('batches.tags.index');
     Route::get('batches/{batch}/tags/print', [RetailItemTagController::class, 'print'])->name('batches.tags.print');
 
+    Route::get('batches/{batch}/audit-trail', [BatchController::class, 'auditTrail'])->name('batches.audit-trail');
+    Route::get('batches/{batch}/sapo-sync-log', [BatchController::class, 'sapoSyncLog'])->name('batches.sapo-sync-log');
+    Route::get('batches/{batch}/incidents', [BatchController::class, 'incidents'])->name('batches.incidents');
+
     Route::post('tags/{tag}/unbind', [RetailItemTagController::class, 'unbind'])->name('tags.unbind');
     Route::post('tags/{tag}/void', [RetailItemTagController::class, 'void'])->name('tags.void');
 

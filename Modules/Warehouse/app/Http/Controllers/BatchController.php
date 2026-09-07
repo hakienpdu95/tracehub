@@ -3,9 +3,11 @@
 namespace Modules\Warehouse\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Modules\ActivityLog\Models\AuditLog;
 use Modules\Warehouse\Actions\Backend\ActivateBatchTagsAction;
 use Modules\Warehouse\Actions\Backend\BindRetailItemTagRangeAction;
 use Modules\Warehouse\Actions\Backend\RecallBatchAction;
@@ -31,7 +33,7 @@ class BatchController extends Controller
     {
         $batches = $handler->handle(new ListBatchesQuery(
             page:      max(1, (int) $request->integer('page', 1)),
-            perPage:   25,
+            perPage:   10,
             sortField: (string) $request->input('sort', 'exp_date'),
             sortDir:   (string) $request->input('dir', 'asc'),
             search:    $request->input('search'),
@@ -147,11 +149,48 @@ class BatchController extends Controller
 
     public function recall(Batch $batch, RecallBatchAction $action): RedirectResponse
     {
-        $this->authorize('update', $batch);
+        $this->authorize('recall', $batch);
 
         $action->handle($batch);
 
         return redirect()->route('backend.batches.show', $batch)
             ->with('success', 'Đã đánh dấu lô "' . $batch->internal_batch_code . '" là thu hồi.');
+    }
+
+    public function auditTrail(Batch $batch): View
+    {
+        $this->authorize('view', $batch);
+
+        $logs = AuditLog::where('model_type', Batch::class)
+            ->where('model_id', $batch->id)
+            ->with('user:id,name')
+            ->orderByDesc('created_at')
+            ->paginate(25);
+
+        return view('warehouse::batches.audit_trail', compact('batch', 'logs'));
+    }
+
+    public function sapoSyncLog(Batch $batch): View
+    {
+        $this->authorize('view', $batch);
+
+        $entries = $batch->tags()
+            ->whereNotNull('external_order_id')
+            ->with('externalOrder')
+            ->orderByDesc('sold_at')
+            ->paginate(25);
+
+        return view('warehouse::batches.sapo_sync_log', compact('batch', 'entries'));
+    }
+
+    public function incidents(Batch $batch): View
+    {
+        $this->authorize('view', $batch);
+
+        $reports = $batch->adverseEventReports()
+            ->orderByDesc('received_at')
+            ->paginate(25);
+
+        return view('warehouse::batches.incidents', compact('batch', 'reports'));
     }
 }
