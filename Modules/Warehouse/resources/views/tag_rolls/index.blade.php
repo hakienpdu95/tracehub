@@ -103,7 +103,7 @@
         <h2 class="text-base font-semibold mb-1">Lịch sử các cuộn đã in</h2>
         <p class="text-xs text-base-content/50 mb-3">Để gán sản phẩm cho một dải tem, vào trang chi tiết Lô hàng cần dán tem.</p>
     </div>
-    <div class="card-body p-0 overflow-hidden rounded-2xl tabulator-daisy">
+    <div class="card-body p-0 overflow-hidden tabulator-daisy">
         <div id="tag-roll-table"></div>
     </div>
 </div>

@@ -57,7 +57,7 @@
                         <p class="text-xs text-base-content/40">Logo hiện tại — tải ảnh mới bên dưới để thay thế</p>
                     </div>
                     @endif
-                    <input type="file" data-logo-pond data-logo-context-id="{{ $brand->id }}">
+                    <input type="file" name="file" data-logo-pond data-logo-context-id="{{ $brand->id }}">
                 </div>
 
                 <div class="form-control mb-4">

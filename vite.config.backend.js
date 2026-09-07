@@ -96,6 +96,7 @@ const CSS_OUTPUT = {
   'activity-log.css':           'assets/modules/activity-log.[hash].css',
   'vendor.css':               'assets/modules/vendor.[hash].css',
   'product.css':              'assets/modules/product.[hash].css',
+  'warehouse.css':            'assets/modules/warehouse.[hash].css',
 };
 
 // ─── Module input entries ─────────────────────────────────────────────
@@ -120,6 +121,7 @@ const MODULE_ENTRIES = [
   'Modules/Product/resources/assets/sass/product.scss',
   'Modules/Product/resources/assets/js/product.js',
   // Warehouse
+  'Modules/Warehouse/resources/assets/sass/warehouse.scss',
   'Modules/Warehouse/resources/assets/js/warehouse.js',
   // Compliance
   'Modules/Compliance/resources/assets/js/compliance.js',

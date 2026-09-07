@@ -50,7 +50,7 @@
                         <span class="label-text-alt text-xs text-base-content/40">Tuỳ chọn — JPG, PNG, WEBP, tối đa 5MB</span>
                     </label>
                     <input type="hidden" name="logo_media_uuid" data-logo-uuid>
-                    <input type="file" data-logo-pond>
+                    <input type="file" name="file" data-logo-pond>
                 </div>
 
                 <div class="form-control mb-4">
